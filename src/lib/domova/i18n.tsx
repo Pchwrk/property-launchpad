@@ -52,6 +52,21 @@ const BG: Record<string, string> = {
   "Opening duplicate…": "Отваряне на копие…",
   " (copy)": " (копие)",
 
+  // Custom tasks
+  "Add task": "Добави задача",
+  "Task title": "Име на задача",
+  "Helper note": "Помощна бележка",
+  "Severity": "Важност",
+  "Save task": "Запази задача",
+  "Cancel": "Отказ",
+  "Edit": "Редактирай",
+  "Save changes": "Запази промените",
+  "Delete task": "Изтрий задача",
+  "Delete this custom task?": "Да се изтрие ли тази персонална задача?",
+  "Custom task": "Персонална задача",
+  "Update the safe details here, then mark the matching checklist items done when confirmed.":
+    "Промени безопасните данни тук, след това маркирай съответните задачи като готови.",
+
   // Card actions menu / map
   "Property actions": "Действия за имота",
   "More": "Още",

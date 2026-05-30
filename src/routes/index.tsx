@@ -1,5 +1,5 @@
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Plus, Trash2, Copy, MoreHorizontal } from "lucide-react";
+import { Plus, Trash2, Copy, MoreHorizontal, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 import { MobileShell } from "@/components/domova/MobileShell";
 import { ReadinessBadge } from "@/components/domova/ReadinessBadge";
@@ -155,6 +155,17 @@ function Dashboard() {
                   id={`actions-${p.id}`}
                   className="flex items-center justify-end gap-1 border-t border-border bg-muted/30 px-2 py-1.5"
                 >
+                  {p.mapsUrl ? (
+                    <a
+                      href={p.mapsUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    >
+                      <MapPin className="h-3.5 w-3.5" />
+                      {t("Open map")}
+                    </a>
+                  ) : null}
                   <button
                     type="button"
                     onClick={() => handleDuplicate(p.id)}
