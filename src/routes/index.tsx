@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import { MobileShell } from "@/components/domova/MobileShell";
 import { ReadinessBadge } from "@/components/domova/ReadinessBadge";
 import { useDomova } from "@/lib/domova/store";
+import { useT } from "@/lib/domova/i18n";
 import { blockers, isReady, overallProgress } from "@/lib/domova/readiness";
 
 export const Route = createFileRoute("/")({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/")({
 function Dashboard() {
   const { properties, createDraft } = useDomova();
   const navigate = useNavigate();
+  const t = useT();
 
   const handleNewDraft = () => {
     const id = createDraft();
@@ -28,15 +30,15 @@ function Dashboard() {
 
   return (
     <MobileShell
-      title="Properties"
-      subtitle={`${properties.length} propert${properties.length === 1 ? "y" : "ies"} in onboarding`}
+      title={t("Properties")}
+      subtitle={`${properties.length} ${t("Properties")}`}
     >
       <button
         onClick={handleNewDraft}
         className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-card/40 px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-card"
       >
         <Plus className="h-4 w-4 text-[color:var(--domova-accent)]" />
-        New draft property
+        {t("New draft property")}
       </button>
 
       <ul className="space-y-3">
@@ -71,7 +73,7 @@ function Dashboard() {
                         />
                       </div>
                       <p className="mt-1.5 text-[11px] text-muted-foreground">
-                        {progress.done}/{progress.total} tasks · {progress.pct}%
+                        {progress.done}/{progress.total} · {progress.pct}%
                       </p>
                     </div>
                   </div>
@@ -83,14 +85,14 @@ function Dashboard() {
       </ul>
 
       <div className="mt-6 rounded-xl border border-border bg-card p-3">
-        <p className="text-[11px] font-medium text-foreground">Quick test path</p>
+        <p className="text-[11px] font-medium text-foreground">{t("Quick test path")}</p>
         <p className="mt-1 text-[11px] text-muted-foreground">
-          Open Sunlit Studio → resolve Booking.com draft listing → approve remaining photo → check Launch review.
+          {t("Open Sunlit Studio → resolve Booking.com draft listing → approve remaining photo → check Launch review.")}
         </p>
       </div>
 
       <p className="mt-4 text-center text-[11px] text-muted-foreground">
-        Prototype · no real owner, address, or credentials are stored.
+        {t("Prototype · no real owner, address, or credentials are stored.")}
       </p>
     </MobileShell>
   );

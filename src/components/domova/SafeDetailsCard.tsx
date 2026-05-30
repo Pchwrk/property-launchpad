@@ -1,4 +1,5 @@
 import { useDomova } from "@/lib/domova/store";
+import { useT } from "@/lib/domova/i18n";
 import {
   CHECK_IN_METHOD_LABEL,
   PROPERTY_TYPE_LABEL,
@@ -9,6 +10,7 @@ import {
 
 export function SafeDetailsCard({ property }: { property: Property }) {
   const { updatePropertyDetails } = useDomova();
+  const t = useT();
   const update = (partial: Parameters<typeof updatePropertyDetails>[1]) =>
     updatePropertyDetails(property.id, partial);
 
@@ -16,15 +18,15 @@ export function SafeDetailsCard({ property }: { property: Property }) {
     <section className="mt-6 rounded-2xl border border-border bg-card p-4">
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Safe property details
+          {t("Safe property details")}
         </h2>
         <span className="rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
-          Session only
+          {t("Session only")}
         </span>
       </div>
 
       <div className="space-y-3">
-        <Field label="Property name">
+        <Field label={t("Property name")}>
           <input
             type="text"
             value={property.name}
@@ -33,7 +35,7 @@ export function SafeDetailsCard({ property }: { property: Property }) {
           />
         </Field>
 
-        <Field label="City">
+        <Field label={t("City")}>
           <input
             type="text"
             value={property.city}
@@ -42,7 +44,7 @@ export function SafeDetailsCard({ property }: { property: Property }) {
           />
         </Field>
 
-        <Field label="Property type">
+        <Field label={t("Property type")}>
           <select
             value={property.propertyType}
             onChange={(e) => update({ propertyType: e.target.value as PropertyType })}
@@ -50,7 +52,7 @@ export function SafeDetailsCard({ property }: { property: Property }) {
           >
             {(Object.keys(PROPERTY_TYPE_LABEL) as PropertyType[]).map((k) => (
               <option key={k} value={k}>
-                {PROPERTY_TYPE_LABEL[k]}
+                {t(PROPERTY_TYPE_LABEL[k])}
               </option>
             ))}
           </select>
@@ -58,26 +60,26 @@ export function SafeDetailsCard({ property }: { property: Property }) {
 
         <div className="grid grid-cols-3 gap-2">
           <NumberField
-            label="Bedrooms"
+            label={t("Bedrooms")}
             value={property.bedrooms}
             min={0}
             onChange={(v) => update({ bedrooms: v })}
           />
           <NumberField
-            label="Beds"
+            label={t("Beds")}
             value={property.beds}
             min={1}
             onChange={(v) => update({ beds: v })}
           />
           <NumberField
-            label="Max guests"
+            label={t("Max guests")}
             value={property.maxGuests}
             min={1}
             onChange={(v) => update({ maxGuests: v })}
           />
         </div>
 
-        <Field label="Check-in method">
+        <Field label={t("Check-in method")}>
           <select
             value={property.checkInMethod}
             onChange={(e) => update({ checkInMethod: e.target.value as CheckInMethod })}
@@ -85,7 +87,7 @@ export function SafeDetailsCard({ property }: { property: Property }) {
           >
             {(Object.keys(CHECK_IN_METHOD_LABEL) as CheckInMethod[]).map((k) => (
               <option key={k} value={k}>
-                {CHECK_IN_METHOD_LABEL[k]}
+                {t(CHECK_IN_METHOD_LABEL[k])}
               </option>
             ))}
           </select>
@@ -93,8 +95,9 @@ export function SafeDetailsCard({ property }: { property: Property }) {
       </div>
 
       <p className="mt-3 text-[11px] text-muted-foreground">
-        No address, contacts, codes, passwords, or payout fields are stored. Edits live only in this
-        browser session.
+        {t(
+          "No address, contacts, codes, passwords, or payout fields are stored. Edits live only in this browser session.",
+        )}
       </p>
     </section>
   );

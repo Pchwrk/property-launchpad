@@ -245,7 +245,7 @@ export const MOCK_PROPERTIES: Property[] = [
     bedrooms: 0,
     beds: 1,
     maxGuests: 2,
-    checkInMethod: "self_check_in",
+    checkInMethod: "lockbox",
     tasks: buildTasks("sunlit-studio", "high"),
     photos: buildPhotos("sunlit-studio", "high"),
   },

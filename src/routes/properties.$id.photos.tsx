@@ -1,6 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { MobileShell } from "@/components/domova/MobileShell";
 import { useDomova } from "@/lib/domova/store";
+import { useT } from "@/lib/domova/i18n";
 import { PHOTO_STATUS_LABEL, type PhotoStatus } from "@/lib/domova/types";
 import { missingRequiredPhotos } from "@/lib/domova/readiness";
 
@@ -24,6 +25,7 @@ function cycle(s: PhotoStatus): PhotoStatus {
 function PhotosPage() {
   const { id } = Route.useParams();
   const { getProperty, setPhotoStatus } = useDomova();
+  const t = useT();
   const property = getProperty(id);
   if (!property) throw notFound();
 
@@ -33,13 +35,13 @@ function PhotosPage() {
 
   return (
     <MobileShell
-      title="Photo readiness"
-      subtitle={`${requiredApproved}/${requiredTotal} required approved`}
+      title={t("Photo readiness")}
+      subtitle={`${requiredApproved}/${requiredTotal} ${t("required approved")}`}
       backTo="/properties/$id"
       backLabel={property.name}
     >
       <p className="mb-3 text-[11px] text-muted-foreground">
-        Tap each tile to cycle: missing → uploaded → approved → retake. No files are uploaded in this prototype.
+        {t("Tap each tile to cycle: missing → uploaded → approved → retake. No files are uploaded in this prototype.")}
       </p>
       <ul className="grid grid-cols-2 gap-3">
         {property.photos.map((photo) => (
@@ -52,15 +54,15 @@ function PhotosPage() {
                 📷
               </div>
               <div>
-                <p className="text-sm font-medium">{photo.label}</p>
+                <p className="text-sm font-medium">{t(photo.label)}</p>
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                  {photo.required ? "Required" : "Optional"}
+                  {photo.required ? t("Required") : t("Optional")}
                 </p>
               </div>
               <span
                 className={`inline-flex w-fit items-center rounded-full border px-2 py-0.5 text-[10px] font-medium ${STYLE[photo.status]}`}
               >
-                {PHOTO_STATUS_LABEL[photo.status]}
+                {t(PHOTO_STATUS_LABEL[photo.status])}
               </span>
             </button>
           </li>
