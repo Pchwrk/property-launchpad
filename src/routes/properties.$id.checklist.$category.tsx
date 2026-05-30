@@ -3,6 +3,7 @@ import { useState } from "react";
 import { SeverityChip } from "@/components/domova/SeverityChip";
 import { MobileShell } from "@/components/domova/MobileShell";
 import { useDomova } from "@/lib/domova/store";
+import { useT } from "@/lib/domova/i18n";
 import {
   CATEGORIES,
   TASK_STATUS_LABEL,
@@ -24,6 +25,7 @@ const STATUSES: TaskStatus[] = ["todo", "done", "na"];
 function ChecklistSection() {
   const { id, category } = Route.useParams();
   const { getProperty, setTaskStatus } = useDomova();
+  const t = useT();
   const property = getProperty(id);
   if (!property) throw notFound();
   const cat = CATEGORIES.find((c) => c.id === (category as CategoryId));
@@ -36,16 +38,17 @@ function ChecklistSection() {
 
   return (
     <MobileShell
-      title={cat.title}
-      subtitle={cat.description}
+      title={t(cat.title)}
+      subtitle={t(cat.description)}
       backTo="/properties/$id"
       backLabel={property.name}
     >
       <div className="mb-3 flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2">
         <div className="min-w-0">
-          <p className="text-sm font-medium">Show open only</p>
+          <p className="text-sm font-medium">{t("Show open only")}</p>
           <p className="text-[11px] text-muted-foreground">
-            Hides tasks marked done or n/a{openOnly && hiddenCount > 0 ? ` · ${hiddenCount} hidden` : ""}
+            {t("Hides tasks marked done or n/a")}
+            {openOnly && hiddenCount > 0 ? ` · ${hiddenCount} ${t("hidden")}` : ""}
           </p>
         </div>
         <button
@@ -67,7 +70,7 @@ function ChecklistSection() {
 
       {visible.length === 0 ? (
         <p className="rounded-lg border border-border bg-card px-3 py-4 text-center text-xs text-[color:var(--status-ready)]">
-          ✓ No open tasks in this category.
+          {t("✓ No open tasks in this category.")}
         </p>
       ) : (
         <ul className="space-y-2">
@@ -82,14 +85,14 @@ function ChecklistSection() {
       )}
 
       <p className="mt-6 text-center text-[11px] text-muted-foreground">
-        Confirmation tasks never store sensitive data — codes, passwords, and contact details stay
-        with the owner.
+        {t("Confirmation tasks never store sensitive data — codes, passwords, and contact details stay with the owner.")}
       </p>
     </MobileShell>
   );
 }
 
 function TaskRow({ task, onChange }: { task: Task; onChange: (s: TaskStatus) => void }) {
+  const t = useT();
   return (
     <li className="rounded-xl border border-border bg-card p-3">
       <div className="flex items-start justify-between gap-2">
@@ -103,14 +106,14 @@ function TaskRow({ task, onChange }: { task: Task; onChange: (s: TaskStatus) => 
                   : "text-foreground"
             }`}
           >
-            {task.title}
+            {t(task.title)}
           </p>
-          {task.hint ? <p className="mt-0.5 text-[11px] text-muted-foreground">{task.hint}</p> : null}
+          {task.hint ? <p className="mt-0.5 text-[11px] text-muted-foreground">{t(task.hint)}</p> : null}
           <div className="mt-1.5 flex items-center gap-1.5">
             <SeverityChip severity={task.severity} muted={task.status === "done"} />
             {task.isConfirmation && (
               <span className="rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
-                Confirmation only
+                {t("Confirmation only")}
               </span>
             )}
           </div>
@@ -140,7 +143,7 @@ function TaskRow({ task, onChange }: { task: Task; onChange: (s: TaskStatus) => 
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {TASK_STATUS_LABEL[s]}
+              {t(TASK_STATUS_LABEL[s])}
             </button>
           );
         })}
