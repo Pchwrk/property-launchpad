@@ -77,6 +77,8 @@ export interface Property {
   checkInMethod: CheckInMethod;
   tasks: Task[];
   photos: PhotoItem[];
+  /** Optional demo Google Maps search link. City-level only, never a precise address. */
+  mapsUrl?: string;
 }
 
 export const CATEGORIES: Category[] = [
