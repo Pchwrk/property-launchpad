@@ -164,6 +164,79 @@ export function DomovaProvider({ children }: { children: ReactNode }) {
     setProperties((prev) => prev.filter((p) => p.id !== propertyId));
   }, []);
 
+  const addCustomTask = useCallback(
+    (
+      propertyId: string,
+      categoryId: CategoryId,
+      input: { title: string; hint?: string; severity: Severity },
+    ): string | null => {
+      const title = input.title.trim();
+      if (!title) return null;
+      const hint = input.hint?.trim() || undefined;
+      let newId: string | null = null;
+      setProperties((prev) => {
+        if (!prev.some((p) => p.id === propertyId)) return prev;
+        const id = `task-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+        newId = id;
+        const task: Task = {
+          id,
+          categoryId,
+          title,
+          hint,
+          severity: input.severity,
+          status: "todo",
+          isCustom: true,
+        };
+        return prev.map((p) =>
+          p.id !== propertyId ? p : { ...p, tasks: [...p.tasks, task] },
+        );
+      });
+      return newId;
+    },
+    [],
+  );
+
+  const updateTask = useCallback(
+    (
+      propertyId: string,
+      taskId: string,
+      partial: { title?: string; hint?: string; severity?: Severity },
+    ) => {
+      // Whitelist editable fields. Never touch id, categoryId, status, key, isCustom.
+      const patch: { title?: string; hint?: string; severity?: Severity } = {};
+      if (partial.title !== undefined) {
+        const t = partial.title.trim();
+        if (t) patch.title = t;
+      }
+      if (partial.hint !== undefined) {
+        const h = partial.hint.trim();
+        patch.hint = h ? h : undefined;
+      }
+      if (partial.severity !== undefined) patch.severity = partial.severity;
+      if (Object.keys(patch).length === 0) return;
+      setProperties((prev) =>
+        prev.map((p) =>
+          p.id !== propertyId
+            ? p
+            : { ...p, tasks: p.tasks.map((t) => (t.id === taskId ? { ...t, ...patch } : t)) },
+        ),
+      );
+    },
+    [],
+  );
+
+  const deleteTask = useCallback((propertyId: string, taskId: string) => {
+    setProperties((prev) =>
+      prev.map((p) => {
+        if (p.id !== propertyId) return p;
+        const target = p.tasks.find((t) => t.id === taskId);
+        // Store-level guard: only custom tasks can be deleted.
+        if (!target || !target.isCustom) return p;
+        return { ...p, tasks: p.tasks.filter((t) => t.id !== taskId) };
+      }),
+    );
+  }, []);
+
   const duplicateProperty = useCallback((propertyId: string): string | null => {
     let newId: string | null = null;
     setProperties((prev) => {
@@ -208,6 +281,9 @@ export function DomovaProvider({ children }: { children: ReactNode }) {
       createDraft,
       deleteProperty,
       duplicateProperty,
+      addCustomTask,
+      updateTask,
+      deleteTask,
       resetDemoData,
       hydrated,
     }),
@@ -220,6 +296,9 @@ export function DomovaProvider({ children }: { children: ReactNode }) {
       createDraft,
       deleteProperty,
       duplicateProperty,
+      addCustomTask,
+      updateTask,
+      deleteTask,
       resetDemoData,
       hydrated,
     ],
