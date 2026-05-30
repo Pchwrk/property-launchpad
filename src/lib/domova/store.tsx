@@ -24,6 +24,8 @@ interface DomovaContextValue {
   setPhotoStatus: (propertyId: string, photoId: string, status: PhotoStatus) => void;
   updatePropertyDetails: (propertyId: string, partial: Partial<EditableDetails>) => void;
   createDraft: () => string;
+  deleteProperty: (propertyId: string) => void;
+  duplicateProperty: (propertyId: string) => string | null;
   resetDemoData: () => void;
   hydrated: boolean;
 }
@@ -147,6 +149,32 @@ export function DomovaProvider({ children }: { children: ReactNode }) {
     return id;
   }, []);
 
+  const deleteProperty = useCallback((propertyId: string) => {
+    setProperties((prev) => prev.filter((p) => p.id !== propertyId));
+  }, []);
+
+  const duplicateProperty = useCallback((propertyId: string): string | null => {
+    let newId: string | null = null;
+    setProperties((prev) => {
+      const src = prev.find((p) => p.id === propertyId);
+      if (!src) return prev;
+      const id = `dup-${Date.now().toString(36)}`;
+      newId = id;
+      const copy: Property = {
+        ...src,
+        id,
+        name: `${src.name} (copy)`,
+        tasks: src.tasks.map((t, i) => ({ ...t, id: `${id}-t${i + 1}` })),
+        photos: src.photos.map((ph, i) => ({ ...ph, id: `${id}-p${i}` })),
+      };
+      const idx = prev.findIndex((p) => p.id === propertyId);
+      const next = prev.slice();
+      next.splice(idx + 1, 0, copy);
+      return next;
+    });
+    return newId;
+  }, []);
+
   const resetDemoData = useCallback(() => {
     if (typeof window !== "undefined") {
       try {
@@ -167,6 +195,8 @@ export function DomovaProvider({ children }: { children: ReactNode }) {
       setPhotoStatus,
       updatePropertyDetails,
       createDraft,
+      deleteProperty,
+      duplicateProperty,
       resetDemoData,
       hydrated,
     }),
@@ -177,6 +207,8 @@ export function DomovaProvider({ children }: { children: ReactNode }) {
       setPhotoStatus,
       updatePropertyDetails,
       createDraft,
+      deleteProperty,
+      duplicateProperty,
       resetDemoData,
       hydrated,
     ],
