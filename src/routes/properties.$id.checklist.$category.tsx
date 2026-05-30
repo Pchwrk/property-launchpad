@@ -43,8 +43,8 @@ function ChecklistSection() {
       backTo="/properties/$id"
       backLabel={property.name}
     >
-      <div className="mb-3 flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2">
-        <div className="min-w-0">
+      <div className="mb-3 flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-3 py-2">
+        <div className="min-w-0 flex-1">
           <p className="text-sm font-medium">{t("Show open only")}</p>
           <p className="text-[11px] text-muted-foreground">
             {t("Hides tasks marked done or n/a")}
@@ -56,13 +56,13 @@ function ChecklistSection() {
           role="switch"
           aria-checked={openOnly}
           onClick={() => setOpenOnly((v) => !v)}
-          className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+          className={`relative inline-flex h-7 w-12 shrink-0 overflow-hidden rounded-full transition-colors ${
             openOnly ? "bg-[color:var(--domova-accent)]" : "bg-muted"
           }`}
         >
           <span
-            className={`absolute top-0.5 h-5 w-5 rounded-full bg-background shadow transition-transform ${
-              openOnly ? "translate-x-5" : "translate-x-0.5"
+            className={`absolute top-1/2 left-0.5 h-5 w-5 -translate-y-1/2 rounded-full bg-background shadow transition-transform ${
+              openOnly ? "translate-x-5" : "translate-x-0"
             }`}
           />
         </button>
