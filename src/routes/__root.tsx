@@ -78,14 +78,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Domova" },
+      { name: "description", content: "Property Launchpad is a mobile-first checklist app for DOMOVA to onboard new short-term rental properties." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Domova" },
+      { property: "og:description", content: "Property Launchpad is a mobile-first checklist app for DOMOVA to onboard new short-term rental properties." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Domova" },
+      { name: "twitter:description", content: "Property Launchpad is a mobile-first checklist app for DOMOVA to onboard new short-term rental properties." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b1e5cbe2-0b73-4f6e-b99f-af2d8f52ed4e/id-preview-67d5f10d--66834664-2104-475e-aade-2e42f801a914.lovable.app-1780124239000.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b1e5cbe2-0b73-4f6e-b99f-af2d8f52ed4e/id-preview-67d5f10d--66834664-2104-475e-aade-2e42f801a914.lovable.app-1780124239000.png" },
     ],
     links: [
       {
