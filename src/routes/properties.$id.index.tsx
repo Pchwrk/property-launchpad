@@ -3,6 +3,7 @@ import { Camera, ChevronRight, Rocket } from "lucide-react";
 import { MobileShell } from "@/components/domova/MobileShell";
 import { ReadinessBadge } from "@/components/domova/ReadinessBadge";
 import { SeverityChip } from "@/components/domova/SeverityChip";
+import { SafeDetailsCard } from "@/components/domova/SafeDetailsCard";
 import { useDomova } from "@/lib/domova/store";
 import { CATEGORIES } from "@/lib/domova/types";
 import {
@@ -13,6 +14,7 @@ import {
   isReady,
   missingRequiredPhotos,
   nextTask,
+  tasksByCategory,
 } from "@/lib/domova/readiness";
 
 export const Route = createFileRoute("/properties/$id/")({
@@ -119,12 +121,20 @@ function PropertyOverview() {
       <ul className="space-y-2">
         {CATEGORIES.map((cat) => {
           const prog = categoryProgress(property, cat.id);
+          const openRequired = tasksByCategory(property, cat.id).filter(
+            (t) => t.severity === "required" && t.status === "todo",
+          ).length;
+          const hasBlockers = prog.openBlockers > 0;
           return (
             <li key={cat.id}>
               <Link
                 to="/properties/$id/checklist/$category"
                 params={{ id, category: cat.id }}
-                className="flex items-center gap-3 rounded-xl border border-border bg-card p-3 hover:border-[color:var(--domova-accent)]/40"
+                className={`flex items-center gap-3 rounded-xl border bg-card p-3 hover:border-[color:var(--domova-accent)]/40 ${
+                  hasBlockers
+                    ? "border-[color:var(--severity-blocking)]/50 bg-[color:var(--severity-blocking)]/5"
+                    : "border-border"
+                }`}
               >
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted text-lg">
                   {cat.icon}
@@ -132,13 +142,27 @@ function PropertyOverview() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <p className="truncate text-sm font-medium">{cat.title}</p>
-                    {prog.openBlockers > 0 && (
-                      <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--severity-blocking)]" />
+                  </div>
+                  <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted-foreground">
+                    <span>
+                      {prog.done}/{prog.total} done
+                    </span>
+                    {hasBlockers && (
+                      <span className="rounded-full bg-[color:var(--severity-blocking)]/15 px-1.5 py-0.5 text-[10px] font-medium text-[color:var(--severity-blocking)]">
+                        {prog.openBlockers} blocker{prog.openBlockers === 1 ? "" : "s"}
+                      </span>
+                    )}
+                    {openRequired > 0 && (
+                      <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-foreground">
+                        {openRequired} required
+                      </span>
                     )}
                   </div>
-                  <p className="truncate text-[11px] text-muted-foreground">
-                    {prog.done}/{prog.total} done
-                  </p>
+                  {cat.id === "basics" && (
+                    <p className="mt-1 text-[10px] text-muted-foreground">
+                      Safe details help confirm basics, but readiness is still controlled by checklist status.
+                    </p>
+                  )}
                 </div>
                 <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
               </Link>
@@ -146,6 +170,8 @@ function PropertyOverview() {
           );
         })}
       </ul>
+
+      <SafeDetailsCard property={property} />
     </MobileShell>
   );
 }

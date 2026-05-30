@@ -2,11 +2,17 @@ import { createContext, useCallback, useContext, useMemo, useState, type ReactNo
 import { MOCK_PROPERTIES, buildEmptyPhotos, buildEmptyTasks } from "./mock-data";
 import type { PhotoStatus, Property, TaskStatus } from "./types";
 
+type EditableDetails = Pick<
+  Property,
+  "name" | "city" | "propertyType" | "bedrooms" | "beds" | "maxGuests" | "checkInMethod"
+>;
+
 interface DomovaContextValue {
   properties: Property[];
   getProperty: (id: string) => Property | undefined;
   setTaskStatus: (propertyId: string, taskId: string, status: TaskStatus) => void;
   setPhotoStatus: (propertyId: string, photoId: string, status: PhotoStatus) => void;
+  updatePropertyDetails: (propertyId: string, partial: Partial<EditableDetails>) => void;
   createDraft: () => string;
 }
 
@@ -40,6 +46,15 @@ export function DomovaProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
+  const updatePropertyDetails = useCallback(
+    (propertyId: string, partial: Partial<EditableDetails>) => {
+      setProperties((prev) =>
+        prev.map((p) => (p.id !== propertyId ? p : { ...p, ...partial })),
+      );
+    },
+    [],
+  );
+
   const createDraft = useCallback(() => {
     const id = `draft-${Date.now().toString(36)}`;
     const draft: Property = {
@@ -49,6 +64,11 @@ export function DomovaProvider({ children }: { children: ReactNode }) {
       addressPlaceholder: "Address placeholder",
       ownerPlaceholder: "Owner placeholder",
       cover: "🏷️",
+      propertyType: "apartment",
+      bedrooms: 1,
+      beds: 1,
+      maxGuests: 2,
+      checkInMethod: "self_check_in",
       tasks: buildEmptyTasks(id),
       photos: buildEmptyPhotos(id),
     };
@@ -57,8 +77,8 @@ export function DomovaProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<DomovaContextValue>(
-    () => ({ properties, getProperty, setTaskStatus, setPhotoStatus, createDraft }),
-    [properties, getProperty, setTaskStatus, setPhotoStatus, createDraft],
+    () => ({ properties, getProperty, setTaskStatus, setPhotoStatus, updatePropertyDetails, createDraft }),
+    [properties, getProperty, setTaskStatus, setPhotoStatus, updatePropertyDetails, createDraft],
   );
 
   return <DomovaContext.Provider value={value}>{children}</DomovaContext.Provider>;

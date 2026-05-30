@@ -2,6 +2,24 @@ export type Severity = "blocking" | "required" | "optional";
 export type TaskStatus = "todo" | "done" | "na";
 export type PhotoStatus = "missing" | "uploaded" | "approved" | "retake";
 
+export type PropertyType = "apartment" | "house" | "studio" | "villa" | "room";
+export type CheckInMethod = "self_check_in" | "host_greeting" | "lockbox" | "smart_lock";
+
+export const PROPERTY_TYPE_LABEL: Record<PropertyType, string> = {
+  apartment: "Apartment",
+  house: "House",
+  studio: "Studio",
+  villa: "Villa",
+  room: "Private room",
+};
+
+export const CHECK_IN_METHOD_LABEL: Record<CheckInMethod, string> = {
+  self_check_in: "Self check-in",
+  host_greeting: "Host greeting",
+  lockbox: "Lockbox",
+  smart_lock: "Smart lock",
+};
+
 export type CategoryId =
   | "basics"
   | "owner"
@@ -45,6 +63,11 @@ export interface Property {
   addressPlaceholder: string;
   ownerPlaceholder: string;
   cover: string;
+  propertyType: PropertyType;
+  bedrooms: number;
+  beds: number;
+  maxGuests: number;
+  checkInMethod: CheckInMethod;
   tasks: Task[];
   photos: PhotoItem[];
 }
