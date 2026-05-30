@@ -83,6 +83,7 @@ function PropertyOverview() {
             >
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium">{next.title}</p>
+                <p className="mt-0.5 text-[11px] text-[color:var(--domova-accent)]">Tap to resolve</p>
                 <div className="mt-1">
                   <SeverityChip severity={next.severity} />
                 </div>
@@ -96,11 +97,19 @@ function PropertyOverview() {
           )}
         </div>
 
-        {(blockerList.length > 0 || photosNeed > 0) && (
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <Stat label="Blockers" value={blockerList.length} accent={blockerList.length > 0} />
-            <Stat label="Photos to approve" value={photosNeed} accent={photosNeed > 0} />
+        {ready ? (
+          <div className="mt-3 rounded-lg border border-[color:var(--status-ready)]/30 bg-[color:var(--status-ready)]/10 p-3">
+            <p className="text-xs font-medium text-[color:var(--status-ready)]">
+              All blocking tasks, required tasks, and required photos are complete.
+            </p>
           </div>
+        ) : (
+          (blockerList.length > 0 || photosNeed > 0) && (
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <Stat label="Blockers" value={blockerList.length} accent={blockerList.length > 0} />
+              <Stat label="Photos to approve" value={photosNeed} accent={photosNeed > 0} />
+            </div>
+          )
         )}
       </section>
 
