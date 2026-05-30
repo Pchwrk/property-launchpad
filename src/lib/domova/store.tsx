@@ -1,4 +1,13 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { MOCK_PROPERTIES, buildEmptyPhotos, buildEmptyTasks } from "./mock-data";
 import { LanguageProvider } from "./i18n";
 import type { PhotoStatus, Property, TaskStatus } from "./types";
@@ -15,12 +24,71 @@ interface DomovaContextValue {
   setPhotoStatus: (propertyId: string, photoId: string, status: PhotoStatus) => void;
   updatePropertyDetails: (propertyId: string, partial: Partial<EditableDetails>) => void;
   createDraft: () => string;
+  resetDemoData: () => void;
+  hydrated: boolean;
 }
 
 const DomovaContext = createContext<DomovaContextValue | null>(null);
 
+const STORAGE_KEY = "domova:onboarding:v1";
+
+function isValidPropertyShape(p: unknown): p is Property {
+  if (!p || typeof p !== "object") return false;
+  const o = p as Record<string, unknown>;
+  return (
+    typeof o.id === "string" &&
+    Array.isArray(o.tasks) &&
+    Array.isArray(o.photos)
+  );
+}
+
+function loadFromStorage(): Property[] | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return null;
+    if (!parsed.every(isValidPropertyShape)) return null;
+    return parsed as Property[];
+  } catch {
+    return null;
+  }
+}
+
+function saveToStorage(properties: Property[]) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(properties));
+  } catch {
+    // quota / privacy mode — ignore, prototype only.
+  }
+}
+
 export function DomovaProvider({ children }: { children: ReactNode }) {
   const [properties, setProperties] = useState<Property[]>(MOCK_PROPERTIES);
+  const [hydrated, setHydrated] = useState(false);
+  const skipNextSave = useRef(true);
+
+  // Client-only hydration from localStorage. Falls back to MOCK on missing/corrupt.
+  useEffect(() => {
+    const stored = loadFromStorage();
+    if (stored) {
+      skipNextSave.current = true;
+      setProperties(stored);
+    }
+    setHydrated(true);
+  }, []);
+
+  // Persist after every change, but skip the initial hydration write.
+  useEffect(() => {
+    if (!hydrated) return;
+    if (skipNextSave.current) {
+      skipNextSave.current = false;
+      return;
+    }
+    saveToStorage(properties);
+  }, [properties, hydrated]);
 
   const getProperty = useCallback(
     (id: string) => properties.find((p) => p.id === id),
@@ -79,9 +147,39 @@ export function DomovaProvider({ children }: { children: ReactNode }) {
     return id;
   }, []);
 
+  const resetDemoData = useCallback(() => {
+    if (typeof window !== "undefined") {
+      try {
+        window.localStorage.removeItem(STORAGE_KEY);
+      } catch {
+        // ignore
+      }
+    }
+    skipNextSave.current = true;
+    setProperties(MOCK_PROPERTIES);
+  }, []);
+
   const value = useMemo<DomovaContextValue>(
-    () => ({ properties, getProperty, setTaskStatus, setPhotoStatus, updatePropertyDetails, createDraft }),
-    [properties, getProperty, setTaskStatus, setPhotoStatus, updatePropertyDetails, createDraft],
+    () => ({
+      properties,
+      getProperty,
+      setTaskStatus,
+      setPhotoStatus,
+      updatePropertyDetails,
+      createDraft,
+      resetDemoData,
+      hydrated,
+    }),
+    [
+      properties,
+      getProperty,
+      setTaskStatus,
+      setPhotoStatus,
+      updatePropertyDetails,
+      createDraft,
+      resetDemoData,
+      hydrated,
+    ],
   );
 
   return (
