@@ -86,7 +86,11 @@ function LaunchPage() {
           <p className="mt-2 text-xs font-medium text-[color:var(--status-ready)]">
             All blocking tasks, required tasks, and required photos are complete.
           </p>
-        ) : null}
+        ) : (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Resolve the listed items, then return here.
+          </p>
+        )}
       </section>
 
       <Section title="Blocking tasks" empty="No blockers remaining.">
