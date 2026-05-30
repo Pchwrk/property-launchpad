@@ -5,6 +5,7 @@ import { ReadinessBadge } from "@/components/domova/ReadinessBadge";
 import { SeverityChip } from "@/components/domova/SeverityChip";
 import { SafeDetailsCard } from "@/components/domova/SafeDetailsCard";
 import { useDomova } from "@/lib/domova/store";
+import { useT } from "@/lib/domova/i18n";
 import { CATEGORIES } from "@/lib/domova/types";
 import {
   airbnbReady,
@@ -30,6 +31,7 @@ export const Route = createFileRoute("/properties/$id/")({
 function PropertyOverview() {
   const { id } = Route.useParams();
   const { getProperty } = useDomova();
+  const t = useT();
   const property = getProperty(id);
   if (!property) throw notFound();
 
@@ -45,7 +47,7 @@ function PropertyOverview() {
       title={property.name}
       subtitle={property.city}
       backTo="/"
-      backLabel="Properties"
+      backLabel={t("Properties")}
       right={<ReadinessBadge ready={ready} blockerCount={blockerList.length} />}
       footer={
         <div className="flex gap-2">
@@ -54,21 +56,21 @@ function PropertyOverview() {
             params={{ id }}
             className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2.5 text-sm font-medium hover:bg-muted"
           >
-            <Camera className="h-4 w-4" /> Photos
+            <Camera className="h-4 w-4" /> {t("Photos")}
           </Link>
           <Link
             to="/properties/$id/launch"
             params={{ id }}
             className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[color:var(--domova-accent)] px-3 py-2.5 text-sm font-semibold text-background"
           >
-            <Rocket className="h-4 w-4" /> Launch review
+            <Rocket className="h-4 w-4" /> {t("Launch review")}
           </Link>
         </div>
       }
     >
       <section className="rounded-2xl border border-border bg-card p-4">
         <p className="text-xs text-muted-foreground">{property.addressPlaceholder}</p>
-        <p className="text-xs text-muted-foreground">Owner: {property.ownerPlaceholder}</p>
+        <p className="text-xs text-muted-foreground">{t("Owner:")} {property.ownerPlaceholder}</p>
 
         <div className="mt-3 flex gap-2">
           <PlatformPill label="Airbnb" ok={aReady} />
@@ -76,7 +78,7 @@ function PropertyOverview() {
         </div>
 
         <div className="mt-4 rounded-xl bg-background/60 p-3">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Next task</p>
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{t("Next task")}</p>
           {next ? (
             <Link
               to="/properties/$id/checklist/$category"
@@ -85,7 +87,7 @@ function PropertyOverview() {
             >
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium">{next.title}</p>
-                <p className="mt-0.5 text-[11px] text-[color:var(--domova-accent)]">Tap to resolve</p>
+                <p className="mt-0.5 text-[11px] text-[color:var(--domova-accent)]">{t("Tap to resolve")}</p>
                 <div className="mt-1">
                   <SeverityChip severity={next.severity} />
                 </div>
@@ -94,7 +96,7 @@ function PropertyOverview() {
             </Link>
           ) : (
             <p className="mt-1 text-sm font-medium text-[color:var(--status-ready)]">
-              All tasks complete 🎉
+              {t("All tasks complete 🎉")}
             </p>
           )}
         </div>
@@ -102,21 +104,21 @@ function PropertyOverview() {
         {ready ? (
           <div className="mt-3 rounded-lg border border-[color:var(--status-ready)]/30 bg-[color:var(--status-ready)]/10 p-3">
             <p className="text-xs font-medium text-[color:var(--status-ready)]">
-              All blocking tasks, required tasks, and required photos are complete.
+              {t("All blocking tasks, required tasks, and required photos are complete.")}
             </p>
           </div>
         ) : (
           (blockerList.length > 0 || photosNeed > 0) && (
             <div className="mt-3 grid grid-cols-2 gap-2">
-              <Stat label="Blockers" value={blockerList.length} accent={blockerList.length > 0} />
-              <Stat label="Photos to approve" value={photosNeed} accent={photosNeed > 0} />
+              <Stat label={t("Blockers")} value={blockerList.length} accent={blockerList.length > 0} />
+              <Stat label={t("Photos to approve")} value={photosNeed} accent={photosNeed > 0} />
             </div>
           )
         )}
       </section>
 
       <h2 className="mt-6 mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        Checklist
+        {t("Checklist")}
       </h2>
       <ul className="space-y-2">
         {CATEGORIES.map((cat) => {
@@ -141,26 +143,26 @@ function PropertyOverview() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="truncate text-sm font-medium">{cat.title}</p>
+                    <p className="truncate text-sm font-medium">{t(cat.title)}</p>
                   </div>
                   <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted-foreground">
                     <span>
-                      {prog.done}/{prog.total} done
+                      {prog.done}/{prog.total} {t("done")}
                     </span>
                     {hasBlockers && (
                       <span className="rounded-full bg-[color:var(--severity-blocking)]/15 px-1.5 py-0.5 text-[10px] font-medium text-[color:var(--severity-blocking)]">
-                        {prog.openBlockers} blocker{prog.openBlockers === 1 ? "" : "s"}
+                        {prog.openBlockers} {t(prog.openBlockers === 1 ? "blocker" : "blockers")}
                       </span>
                     )}
                     {openRequired > 0 && (
                       <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-foreground">
-                        {openRequired} required
+                        {openRequired} {t("required")}
                       </span>
                     )}
                   </div>
                   {cat.id === "basics" && (
                     <p className="mt-1 text-[10px] text-muted-foreground">
-                      Safe details help confirm basics, but readiness is still controlled by checklist status.
+                      {t("Safe details help confirm basics, but readiness is still controlled by checklist status.")}
                     </p>
                   )}
                 </div>
@@ -177,6 +179,7 @@ function PropertyOverview() {
 }
 
 function PlatformPill({ label, ok }: { label: string; ok: boolean }) {
+  const t = useT();
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium ${
@@ -185,7 +188,7 @@ function PlatformPill({ label, ok }: { label: string; ok: boolean }) {
           : "border-border bg-muted text-muted-foreground"
       }`}
     >
-      ● {label} {ok ? "ready" : "not ready"}
+      ● {label} {ok ? t("ready") : t("not ready")}
     </span>
   );
 }
