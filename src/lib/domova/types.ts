@@ -63,6 +63,10 @@ export interface PhotoItem {
   label: string;
   required: boolean;
   status: PhotoStatus;
+  /** Optional free-text note (e.g. retake reason). Prototype only. */
+  note?: string;
+  /** True for user-created photo items. System/default items omit this. */
+  isCustom?: boolean;
 }
 
 export interface Property {
