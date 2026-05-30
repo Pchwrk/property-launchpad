@@ -1,6 +1,28 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 
 export type Lang = "en" | "bg";
+
+const LANG_STORAGE_KEY = "domova:language:v1";
+
+function loadLang(): Lang {
+  if (typeof window === "undefined") return "bg";
+  try {
+    const v = window.localStorage.getItem(LANG_STORAGE_KEY);
+    if (v === "bg" || v === "en") return v;
+  } catch {
+    // ignore
+  }
+  return "bg";
+}
 
 // Bulgarian overrides only. Missing keys fall back to the English source string.
 const BG: Record<string, string> = {
@@ -29,6 +51,14 @@ const BG: Record<string, string> = {
     "Все още няма имоти. Натисни „Нов имот“, за да започнеш, или нулирай демо данните.",
   "Opening duplicate…": "Отваряне на копие…",
   " (copy)": " (копие)",
+
+  // Card actions menu / map
+  "Property actions": "Действия за имота",
+  "More": "Още",
+  "Open map": "Отвори карта",
+  "No map link": "Няма връзка с карта",
+  "Delete this demo property? This only removes it from this browser.":
+    "Да се изтрие ли този демо имот? Това го премахва само от този браузър.",
 
   // Property overview
   "Photos": "Снимки",
@@ -259,8 +289,27 @@ interface LanguageContextValue {
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  // English default. Session-only memory; no persistence.
-  const [lang, setLang] = useState<Lang>("en");
+  // Bulgarian default. Persisted under "domova:language:v1".
+  const [lang, setLangState] = useState<Lang>("bg");
+  const hydrated = useRef(false);
+
+  useEffect(() => {
+    const stored = loadLang();
+    if (stored !== "bg") setLangState(stored);
+    hydrated.current = true;
+  }, []);
+
+  const setLang = useCallback((l: Lang) => {
+    setLangState(l);
+    if (typeof window !== "undefined") {
+      try {
+        window.localStorage.setItem(LANG_STORAGE_KEY, l);
+      } catch {
+        // ignore quota / privacy
+      }
+    }
+  }, []);
+
   const t = useCallback(
     (key: string) => (lang === "en" ? key : BG[key] ?? key),
     [lang],
