@@ -4,6 +4,7 @@ import { MobileShell } from "@/components/domova/MobileShell";
 import { ReadinessBadge } from "@/components/domova/ReadinessBadge";
 import { SeverityChip } from "@/components/domova/SeverityChip";
 import { useDomova } from "@/lib/domova/store";
+import { useT } from "@/lib/domova/i18n";
 import {
   airbnbChecks,
   airbnbReady,
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/properties/$id/launch")({
 function LaunchPage() {
   const { id } = Route.useParams();
   const { getProperty } = useDomova();
+  const t = useT();
   const property = getProperty(id);
   if (!property) throw notFound();
 
@@ -37,27 +39,27 @@ function LaunchPage() {
 
   return (
     <MobileShell
-      title="Launch readiness"
+      title={t("Launch readiness")}
       subtitle={property.name}
       backTo="/properties/$id"
       backLabel={property.name}
       footer={
         <div>
           <p className="mb-2 text-[11px] text-muted-foreground">
-            Publishing is disabled in this prototype. Buttons only unlock when computed readiness passes.
+            {t("Publishing is disabled in this prototype. Buttons only unlock when computed readiness passes.")}
           </p>
           <div className="flex gap-2">
             <button
               disabled={!aReady}
               className="flex-1 rounded-lg bg-[color:var(--domova-accent)] px-3 py-2.5 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-40"
             >
-              Publish to Airbnb
+              {t("Publish to Airbnb")}
             </button>
             <button
               disabled={!bReady}
               className="flex-1 rounded-lg bg-[color:var(--domova-accent)] px-3 py-2.5 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-40"
             >
-              Publish to Booking
+              {t("Publish to Booking")}
             </button>
           </div>
         </div>
@@ -72,28 +74,28 @@ function LaunchPage() {
       >
         <div className="flex items-center justify-between gap-2">
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Overall</p>
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{t("Overall")}</p>
             <h2 className="mt-0.5 text-xl font-semibold">
-              {ready ? "Ready to publish" : "Not ready"}
+              {ready ? t("Ready to publish") : t("Not ready")}
             </h2>
           </div>
           <ReadinessBadge ready={ready} blockerCount={blockerList.length} size="md" />
         </div>
         <p className="mt-2 text-xs text-muted-foreground">
-          Computed from task & photo status — never set manually.
+          {t("Computed from task & photo status — never set manually.")}
         </p>
         {ready ? (
           <p className="mt-2 text-xs font-medium text-[color:var(--status-ready)]">
-            All blocking tasks, required tasks, and required photos are complete.
+            {t("All blocking tasks, required tasks, and required photos are complete.")}
           </p>
         ) : (
           <p className="mt-2 text-xs text-muted-foreground">
-            Resolve the listed items, then return here.
+            {t("Resolve the listed items, then return here.")}
           </p>
         )}
       </section>
 
-      <Section title="Blocking tasks" empty="No blockers remaining.">
+      <Section title={t("Blocking tasks")} empty={t("No blockers remaining.")}>
         {blockerList.map((t) => (
           <IssueRow
             key={t.id}
@@ -104,7 +106,7 @@ function LaunchPage() {
         ))}
       </Section>
 
-      <Section title="Required tasks open" empty="All required tasks complete.">
+      <Section title={t("Required tasks open")} empty={t("All required tasks complete.")}>
         {requiredList.map((t) => (
           <IssueRow
             key={t.id}
@@ -115,7 +117,7 @@ function LaunchPage() {
         ))}
       </Section>
 
-      <Section title="Required photos" empty="All required photos approved.">
+      <Section title={t("Required photos")} empty={t("All required photos approved.")}>
         {photoList.map((p) => (
           <Link
             key={p.id}
@@ -131,8 +133,8 @@ function LaunchPage() {
         ))}
       </Section>
 
-      <PlatformSection title="Airbnb checks" checks={aChecks} ready={aReady} />
-      <PlatformSection title="Booking.com checks" checks={bChecks} ready={bReady} />
+      <PlatformSection title={t("Airbnb checks")} checks={aChecks} ready={aReady} />
+      <PlatformSection title={t("Booking.com checks")} checks={bChecks} ready={bReady} />
     </MobileShell>
   );
 }
@@ -173,13 +175,14 @@ function IssueRow({
   title: string;
   chip: React.ReactNode;
 }) {
+  const t = useT();
   return (
     <Link
       to="/properties/$id/checklist/$category"
       params={to}
       className="flex items-center justify-between gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm"
     >
-      <span className="min-w-0 truncate">{title}</span>
+      <span className="min-w-0 truncate">{t(title)}</span>
       {chip}
     </Link>
   );
@@ -194,6 +197,7 @@ function PlatformSection({
   checks: { label: string; ok: boolean }[];
   ready: boolean;
 }) {
+  const t = useT();
   return (
     <section className="mt-6">
       <div className="mb-2 flex items-center justify-between px-1">
@@ -205,7 +209,7 @@ function PlatformSection({
             ready ? "text-[color:var(--status-ready)]" : "text-muted-foreground"
           }`}
         >
-          {ready ? "Ready" : "Not ready"}
+          {ready ? t("Ready") : t("Not ready")}
         </span>
       </div>
       <ul className="space-y-1.5">
@@ -219,7 +223,7 @@ function PlatformSection({
             ) : (
               <X className="h-4 w-4 text-[color:var(--severity-blocking)]" />
             )}
-            <span className={c.ok ? "text-foreground" : "text-muted-foreground"}>{c.label}</span>
+            <span className={c.ok ? "text-foreground" : "text-muted-foreground"}>{t(c.label)}</span>
           </li>
         ))}
       </ul>
