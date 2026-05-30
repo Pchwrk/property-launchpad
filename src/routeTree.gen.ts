@@ -10,33 +10,97 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PropertiesIdRouteImport } from './routes/properties.$id'
+import { Route as PropertiesIdIndexRouteImport } from './routes/properties.$id.index'
+import { Route as PropertiesIdPhotosRouteImport } from './routes/properties.$id.photos'
+import { Route as PropertiesIdLaunchRouteImport } from './routes/properties.$id.launch'
+import { Route as PropertiesIdChecklistCategoryRouteImport } from './routes/properties.$id.checklist.$category'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PropertiesIdRoute = PropertiesIdRouteImport.update({
+  id: '/properties/$id',
+  path: '/properties/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropertiesIdIndexRoute = PropertiesIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PropertiesIdRoute,
+} as any)
+const PropertiesIdPhotosRoute = PropertiesIdPhotosRouteImport.update({
+  id: '/photos',
+  path: '/photos',
+  getParentRoute: () => PropertiesIdRoute,
+} as any)
+const PropertiesIdLaunchRoute = PropertiesIdLaunchRouteImport.update({
+  id: '/launch',
+  path: '/launch',
+  getParentRoute: () => PropertiesIdRoute,
+} as any)
+const PropertiesIdChecklistCategoryRoute =
+  PropertiesIdChecklistCategoryRouteImport.update({
+    id: '/checklist/$category',
+    path: '/checklist/$category',
+    getParentRoute: () => PropertiesIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/properties/$id': typeof PropertiesIdRouteWithChildren
+  '/properties/$id/launch': typeof PropertiesIdLaunchRoute
+  '/properties/$id/photos': typeof PropertiesIdPhotosRoute
+  '/properties/$id/': typeof PropertiesIdIndexRoute
+  '/properties/$id/checklist/$category': typeof PropertiesIdChecklistCategoryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/properties/$id/launch': typeof PropertiesIdLaunchRoute
+  '/properties/$id/photos': typeof PropertiesIdPhotosRoute
+  '/properties/$id': typeof PropertiesIdIndexRoute
+  '/properties/$id/checklist/$category': typeof PropertiesIdChecklistCategoryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/properties/$id': typeof PropertiesIdRouteWithChildren
+  '/properties/$id/launch': typeof PropertiesIdLaunchRoute
+  '/properties/$id/photos': typeof PropertiesIdPhotosRoute
+  '/properties/$id/': typeof PropertiesIdIndexRoute
+  '/properties/$id/checklist/$category': typeof PropertiesIdChecklistCategoryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/properties/$id'
+    | '/properties/$id/launch'
+    | '/properties/$id/photos'
+    | '/properties/$id/'
+    | '/properties/$id/checklist/$category'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/properties/$id/launch'
+    | '/properties/$id/photos'
+    | '/properties/$id'
+    | '/properties/$id/checklist/$category'
+  id:
+    | '__root__'
+    | '/'
+    | '/properties/$id'
+    | '/properties/$id/launch'
+    | '/properties/$id/photos'
+    | '/properties/$id/'
+    | '/properties/$id/checklist/$category'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PropertiesIdRoute: typeof PropertiesIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +112,66 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/properties/$id': {
+      id: '/properties/$id'
+      path: '/properties/$id'
+      fullPath: '/properties/$id'
+      preLoaderRoute: typeof PropertiesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/properties/$id/': {
+      id: '/properties/$id/'
+      path: '/'
+      fullPath: '/properties/$id/'
+      preLoaderRoute: typeof PropertiesIdIndexRouteImport
+      parentRoute: typeof PropertiesIdRoute
+    }
+    '/properties/$id/photos': {
+      id: '/properties/$id/photos'
+      path: '/photos'
+      fullPath: '/properties/$id/photos'
+      preLoaderRoute: typeof PropertiesIdPhotosRouteImport
+      parentRoute: typeof PropertiesIdRoute
+    }
+    '/properties/$id/launch': {
+      id: '/properties/$id/launch'
+      path: '/launch'
+      fullPath: '/properties/$id/launch'
+      preLoaderRoute: typeof PropertiesIdLaunchRouteImport
+      parentRoute: typeof PropertiesIdRoute
+    }
+    '/properties/$id/checklist/$category': {
+      id: '/properties/$id/checklist/$category'
+      path: '/checklist/$category'
+      fullPath: '/properties/$id/checklist/$category'
+      preLoaderRoute: typeof PropertiesIdChecklistCategoryRouteImport
+      parentRoute: typeof PropertiesIdRoute
+    }
   }
 }
 
+interface PropertiesIdRouteChildren {
+  PropertiesIdLaunchRoute: typeof PropertiesIdLaunchRoute
+  PropertiesIdPhotosRoute: typeof PropertiesIdPhotosRoute
+  PropertiesIdIndexRoute: typeof PropertiesIdIndexRoute
+  PropertiesIdChecklistCategoryRoute: typeof PropertiesIdChecklistCategoryRoute
+}
+
+const PropertiesIdRouteChildren: PropertiesIdRouteChildren = {
+  PropertiesIdLaunchRoute: PropertiesIdLaunchRoute,
+  PropertiesIdPhotosRoute: PropertiesIdPhotosRoute,
+  PropertiesIdIndexRoute: PropertiesIdIndexRoute,
+  PropertiesIdChecklistCategoryRoute: PropertiesIdChecklistCategoryRoute,
+}
+
+const PropertiesIdRouteWithChildren = PropertiesIdRoute._addFileChildren(
+  PropertiesIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PropertiesIdRoute: PropertiesIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
