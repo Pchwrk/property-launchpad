@@ -24,10 +24,13 @@ function cycle(s: PhotoStatus): PhotoStatus {
 
 function PhotosPage() {
   const { id } = Route.useParams();
-  const { getProperty, setPhotoStatus } = useDomova();
+  const { getProperty, setPhotoStatus, hydrated } = useDomova();
   const t = useT();
   const property = getProperty(id);
-  if (!property) throw notFound();
+  if (!property) {
+    if (!hydrated) return null;
+    throw notFound();
+  }
 
   const requiredTotal = property.photos.filter((p) => p.required).length;
   const requiredApproved =

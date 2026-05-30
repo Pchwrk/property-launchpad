@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
-  const { properties, createDraft } = useDomova();
+  const { properties, createDraft, resetDemoData } = useDomova();
   const navigate = useNavigate();
   const t = useT();
   const [pendingDraftId, setPendingDraftId] = useState<string | null>(null);
@@ -39,6 +39,14 @@ function Dashboard() {
       navigate({ to: "/properties/$id", params: { id } });
     }
   }, [pendingDraftId, properties, navigate]);
+
+  const handleReset = () => {
+    if (typeof window === "undefined") return;
+    const ok = window.confirm(
+      t("Reset demo data? This clears saved drafts and progress in this browser only."),
+    );
+    if (ok) resetDemoData();
+  };
 
   return (
     <MobileShell
@@ -105,8 +113,20 @@ function Dashboard() {
       </div>
 
       <p className="mt-4 text-center text-[11px] text-muted-foreground">
-        {t("Prototype · no real owner, address, or credentials are stored.")}
+        {t(
+          "Demo data is saved only in this browser. Do not enter real addresses, contacts, codes, passwords, payout details, or documents.",
+        )}
       </p>
+
+      <div className="mt-3 flex justify-center">
+        <button
+          type="button"
+          onClick={handleReset}
+          className="text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+        >
+          {t("Reset demo data")}
+        </button>
+      </div>
     </MobileShell>
   );
 }

@@ -24,14 +24,16 @@ const STATUSES: TaskStatus[] = ["todo", "done", "na"];
 
 function ChecklistSection() {
   const { id, category } = Route.useParams();
-  const { getProperty, setTaskStatus } = useDomova();
+  const { getProperty, setTaskStatus, hydrated } = useDomova();
   const t = useT();
-  const property = getProperty(id);
-  if (!property) throw notFound();
-  const cat = CATEGORIES.find((c) => c.id === (category as CategoryId));
-  if (!cat) throw notFound();
-
   const [openOnly, setOpenOnly] = useState(false);
+  const property = getProperty(id);
+  const cat = CATEGORIES.find((c) => c.id === (category as CategoryId));
+  if (!property) {
+    if (!hydrated) return null;
+    throw notFound();
+  }
+  if (!cat) throw notFound();
   const tasks = tasksByCategory(property, cat.id);
   const visible = openOnly ? tasks.filter((t) => t.status === "todo") : tasks;
   const hiddenCount = tasks.length - visible.length;
