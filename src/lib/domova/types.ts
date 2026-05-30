@@ -47,6 +47,7 @@ export interface Task {
   severity: Severity;
   status: TaskStatus;
   isConfirmation?: boolean;
+  key?: string;
 }
 
 export interface PhotoItem {
