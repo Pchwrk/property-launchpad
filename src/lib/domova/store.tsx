@@ -10,7 +10,15 @@ import {
 } from "react";
 import { MOCK_PROPERTIES, buildEmptyPhotos, buildEmptyTasks } from "./mock-data";
 import { LanguageProvider } from "./i18n";
-import type { CategoryId, PhotoStatus, Property, Severity, Task, TaskStatus } from "./types";
+import type {
+  CategoryId,
+  PhotoItem,
+  PhotoStatus,
+  Property,
+  Severity,
+  Task,
+  TaskStatus,
+} from "./types";
 
 type EditableDetails = Pick<
   Property,
@@ -37,6 +45,16 @@ interface DomovaContextValue {
     partial: { title?: string; hint?: string; severity?: Severity },
   ) => void;
   deleteTask: (propertyId: string, taskId: string) => void;
+  addCustomPhoto: (
+    propertyId: string,
+    input: { label: string; required: boolean; note?: string },
+  ) => string | null;
+  updatePhotoItem: (
+    propertyId: string,
+    photoId: string,
+    partial: { label?: string; required?: boolean; note?: string },
+  ) => void;
+  deletePhotoItem: (propertyId: string, photoId: string) => void;
   resetDemoData: () => void;
   hydrated: boolean;
 }
@@ -237,6 +255,77 @@ export function DomovaProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
+  const addCustomPhoto = useCallback(
+    (
+      propertyId: string,
+      input: { label: string; required: boolean; note?: string },
+    ): string | null => {
+      const label = input.label.trim();
+      if (!label) return null;
+      const note = input.note?.trim() || undefined;
+      let newId: string | null = null;
+      setProperties((prev) => {
+        if (!prev.some((p) => p.id === propertyId)) return prev;
+        const id = `photo-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+        newId = id;
+        const photo: PhotoItem = {
+          id,
+          label,
+          required: !!input.required,
+          status: "missing",
+          note,
+          isCustom: true,
+        };
+        return prev.map((p) =>
+          p.id !== propertyId ? p : { ...p, photos: [...p.photos, photo] },
+        );
+      });
+      return newId;
+    },
+    [],
+  );
+
+  const updatePhotoItem = useCallback(
+    (
+      propertyId: string,
+      photoId: string,
+      partial: { label?: string; required?: boolean; note?: string },
+    ) => {
+      // Whitelist editable fields. Never touch id, status, isCustom.
+      const patch: { label?: string; required?: boolean; note?: string } = {};
+      if (partial.label !== undefined) {
+        const l = partial.label.trim();
+        if (l) patch.label = l;
+      }
+      if (partial.required !== undefined) patch.required = !!partial.required;
+      if (partial.note !== undefined) {
+        const n = partial.note.trim();
+        patch.note = n ? n : undefined;
+      }
+      if (Object.keys(patch).length === 0) return;
+      setProperties((prev) =>
+        prev.map((p) =>
+          p.id !== propertyId
+            ? p
+            : { ...p, photos: p.photos.map((ph) => (ph.id === photoId ? { ...ph, ...patch } : ph)) },
+        ),
+      );
+    },
+    [],
+  );
+
+  const deletePhotoItem = useCallback((propertyId: string, photoId: string) => {
+    setProperties((prev) =>
+      prev.map((p) => {
+        if (p.id !== propertyId) return p;
+        const target = p.photos.find((ph) => ph.id === photoId);
+        // Store-level guard: only custom photo items can be deleted.
+        if (!target || !target.isCustom) return p;
+        return { ...p, photos: p.photos.filter((ph) => ph.id !== photoId) };
+      }),
+    );
+  }, []);
+
   const duplicateProperty = useCallback((propertyId: string): string | null => {
     let newId: string | null = null;
     setProperties((prev) => {
@@ -284,6 +373,9 @@ export function DomovaProvider({ children }: { children: ReactNode }) {
       addCustomTask,
       updateTask,
       deleteTask,
+      addCustomPhoto,
+      updatePhotoItem,
+      deletePhotoItem,
       resetDemoData,
       hydrated,
     }),
@@ -299,6 +391,9 @@ export function DomovaProvider({ children }: { children: ReactNode }) {
       addCustomTask,
       updateTask,
       deleteTask,
+      addCustomPhoto,
+      updatePhotoItem,
+      deletePhotoItem,
       resetDemoData,
       hydrated,
     ],
