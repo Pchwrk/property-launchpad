@@ -73,7 +73,7 @@ function TaskRow({ task, onChange }: { task: Task; onChange: (s: TaskStatus) => 
           </p>
           {task.hint ? <p className="mt-0.5 text-[11px] text-muted-foreground">{task.hint}</p> : null}
           <div className="mt-1.5 flex items-center gap-1.5">
-            <SeverityChip severity={task.severity} />
+            <SeverityChip severity={task.severity} muted={task.status === "done"} />
             {task.isConfirmation && (
               <span className="rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
                 Confirmation only

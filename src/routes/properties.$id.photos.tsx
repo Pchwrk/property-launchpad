@@ -39,7 +39,7 @@ function PhotosPage() {
       backLabel={property.name}
     >
       <p className="mb-3 text-[11px] text-muted-foreground">
-        Prototype — tap a tile to cycle status. No real files are uploaded.
+        Tap each tile to cycle: missing → uploaded → approved → retake. No files are uploaded in this prototype.
       </p>
       <ul className="grid grid-cols-2 gap-3">
         {property.photos.map((photo) => (

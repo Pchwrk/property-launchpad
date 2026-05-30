@@ -9,10 +9,12 @@ const STYLE: Record<Severity, string> = {
     "bg-[color:var(--severity-optional)]/15 text-[color:var(--severity-optional)] border-[color:var(--severity-optional)]/30",
 };
 
-export function SeverityChip({ severity }: { severity: Severity }) {
+const MUTED = "bg-muted/60 text-muted-foreground/70 border-border/40";
+
+export function SeverityChip({ severity, muted }: { severity: Severity; muted?: boolean }) {
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide ${STYLE[severity]}`}
+      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide ${muted ? MUTED : STYLE[severity]}`}
     >
       {SEVERITY_LABEL[severity]}
     </span>

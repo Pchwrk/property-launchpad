@@ -29,7 +29,7 @@ function Dashboard() {
   return (
     <MobileShell
       title="Properties"
-      subtitle={`${properties.length} draft${properties.length === 1 ? "" : "s"} in onboarding`}
+      subtitle={`${properties.length} propert${properties.length === 1 ? "y" : "ies"} in onboarding`}
     >
       <button
         onClick={handleNewDraft}
@@ -82,7 +82,14 @@ function Dashboard() {
         })}
       </ul>
 
-      <p className="mt-6 text-center text-[11px] text-muted-foreground">
+      <div className="mt-6 rounded-xl border border-border bg-card p-3">
+        <p className="text-[11px] font-medium text-foreground">Quick test path</p>
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          Open Sunlit Studio → resolve Booking.com draft listing → approve remaining photo → check Launch review.
+        </p>
+      </div>
+
+      <p className="mt-4 text-center text-[11px] text-muted-foreground">
         Prototype · no real owner, address, or credentials are stored.
       </p>
     </MobileShell>

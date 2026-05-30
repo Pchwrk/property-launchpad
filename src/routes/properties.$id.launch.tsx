@@ -42,19 +42,24 @@ function LaunchPage() {
       backTo="/properties/$id"
       backLabel={property.name}
       footer={
-        <div className="flex gap-2">
-          <button
-            disabled={!aReady}
-            className="flex-1 rounded-lg bg-[color:var(--domova-accent)] px-3 py-2.5 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            Publish to Airbnb
-          </button>
-          <button
-            disabled={!bReady}
-            className="flex-1 rounded-lg bg-[color:var(--domova-accent)] px-3 py-2.5 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            Publish to Booking
-          </button>
+        <div>
+          <p className="mb-2 text-[11px] text-muted-foreground">
+            Publishing is disabled in this prototype. Buttons only unlock when computed readiness passes.
+          </p>
+          <div className="flex gap-2">
+            <button
+              disabled={!aReady}
+              className="flex-1 rounded-lg bg-[color:var(--domova-accent)] px-3 py-2.5 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Publish to Airbnb
+            </button>
+            <button
+              disabled={!bReady}
+              className="flex-1 rounded-lg bg-[color:var(--domova-accent)] px-3 py-2.5 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Publish to Booking
+            </button>
+          </div>
         </div>
       }
     >
@@ -77,6 +82,11 @@ function LaunchPage() {
         <p className="mt-2 text-xs text-muted-foreground">
           Computed from task & photo status — never set manually.
         </p>
+        {ready ? (
+          <p className="mt-2 text-xs font-medium text-[color:var(--status-ready)]">
+            All blocking tasks, required tasks, and required photos are complete.
+          </p>
+        ) : null}
       </section>
 
       <Section title="Blocking tasks" empty="No blockers remaining.">
