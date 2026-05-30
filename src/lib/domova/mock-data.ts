@@ -5,99 +5,177 @@ type TaskSeed = {
   severity: Severity;
   hint?: string;
   isConfirmation?: boolean;
+  key?: string;
 };
 
 const TASK_TEMPLATE: Record<CategoryId, TaskSeed[]> = {
   basics: [
     { title: "Property name set", severity: "blocking" },
     { title: "Property type selected", severity: "required" },
-    { title: "Max guests confirmed", severity: "required" },
-    { title: "Bedrooms & beds set", severity: "required" },
-    { title: "Short description drafted", severity: "optional" },
+    { title: "Bedrooms, beds, and max guests confirmed", severity: "required" },
+    { title: "Sleeping arrangements checked", severity: "required" },
+    { title: "Listing description draft prepared", severity: "optional" },
   ],
   owner: [
     {
       title: "Owner contact confirmed",
       severity: "blocking",
       isConfirmation: true,
-      hint: "No phone numbers stored — confirm only.",
+      hint: "Confirm only — no phone numbers or emails stored.",
     },
     {
       title: "Backup contact confirmed",
+      severity: "required",
+      isConfirmation: true,
+      hint: "Confirm only — no contact data stored.",
+    },
+    {
+      title: "Owner communication preference confirmed",
       severity: "optional",
       isConfirmation: true,
+      hint: "Confirm only — do not store real details.",
+    },
+    {
+      title: "Payout details confirmed as checked",
+      severity: "blocking",
+      isConfirmation: true,
+      hint: "Confirm only — no payout or bank data stored.",
+      key: "payout_confirmed",
     },
   ],
   documents: [
     {
-      title: "Rental license checked",
+      title: "Management agreement confirmed",
       severity: "blocking",
       isConfirmation: true,
-      hint: "No document files uploaded.",
+      hint: "Confirm only — no documents uploaded.",
     },
-    { title: "Insurance noted", severity: "required", isConfirmation: true },
-    { title: "Tax registration noted", severity: "required", isConfirmation: true },
+    {
+      title: "Ownership / permission document checked",
+      severity: "blocking",
+      isConfirmation: true,
+      hint: "Confirm only — no documents uploaded.",
+    },
+    {
+      title: "ID or company document checked",
+      severity: "required",
+      isConfirmation: true,
+      hint: "Confirm only — no documents uploaded.",
+    },
+    {
+      title: "Rental license / local registration checked",
+      severity: "blocking",
+      isConfirmation: true,
+      hint: "Confirm only — no documents uploaded.",
+    },
+    {
+      title: "Tourist tax or local tax requirement checked",
+      severity: "required",
+      isConfirmation: true,
+      hint: "Confirm only — no documents uploaded.",
+    },
   ],
   access: [
+    {
+      title: "Check-in method selected",
+      severity: "blocking",
+    },
     {
       title: "Access / lockbox details confirmed",
       severity: "blocking",
       isConfirmation: true,
-      hint: "Codes & key locations are never stored.",
+      hint: "Confirm only — codes and key locations are never stored.",
     },
-    { title: "Backup key plan agreed", severity: "required", isConfirmation: true },
+    {
+      title: "Backup key plan confirmed",
+      severity: "required",
+      isConfirmation: true,
+      hint: "Confirm only — no key locations stored.",
+    },
+    {
+      title: "Key handover process confirmed",
+      severity: "required",
+      isConfirmation: true,
+      hint: "Confirm only — no codes or locations stored.",
+    },
+    {
+      title: "Emergency access process confirmed",
+      severity: "required",
+      isConfirmation: true,
+      hint: "Confirm only — no codes or locations stored.",
+    },
   ],
   wifi: [
+    { title: "Wi-Fi available", severity: "required" },
     {
       title: "Wi-Fi details confirmed",
       severity: "blocking",
       isConfirmation: true,
-      hint: "Passwords are never stored.",
+      hint: "Confirm only — passwords are never stored.",
     },
-    { title: "Utilities active", severity: "required", isConfirmation: true },
-    { title: "Smart lock tested", severity: "optional" },
+    { title: "Electricity and water checked", severity: "blocking", isConfirmation: true },
+    { title: "Heating / AC checked", severity: "required", isConfirmation: true },
+    { title: "Appliance basics checked", severity: "required", isConfirmation: true },
   ],
   cleaning: [
     { title: "Cleaner assigned", severity: "blocking", isConfirmation: true },
-    { title: "Linen set ready", severity: "required" },
-    { title: "Welcome supplies stocked", severity: "required" },
-    { title: "Turnover SLA agreed", severity: "optional" },
+    { title: "First cleaning scheduled", severity: "required" },
+    { title: "Linens and towels ready", severity: "required" },
+    { title: "Consumables stocked", severity: "required" },
+    { title: "Trash instructions ready", severity: "optional" },
+    { title: "Damage / maintenance reporting process confirmed", severity: "required", isConfirmation: true },
   ],
   photos: [
-    { title: "Photographer booked", severity: "required" },
+    { title: "Photographer or photo plan confirmed", severity: "required" },
     { title: "Staging complete", severity: "required" },
-    { title: "Hero shot selected", severity: "blocking" },
+    { title: "Hero photo selected", severity: "blocking", key: "hero_selected" },
+    { title: "Required room photos checked", severity: "required" },
+    { title: "Entrance / building photo checked", severity: "required" },
+    { title: "Retake review complete", severity: "optional" },
   ],
   rules: [
-    { title: "House rules drafted", severity: "required" },
-    { title: "Check-in / out times set", severity: "blocking" },
-    { title: "Pets / smoking policy set", severity: "required" },
+    { title: "House rules drafted", severity: "required", key: "house_rules" },
+    { title: "Check-in instructions drafted", severity: "blocking", key: "checkin_instructions" },
+    { title: "Check-out instructions drafted", severity: "required", key: "checkout_instructions" },
+    {
+      title: "Emergency contact placeholder confirmed",
+      severity: "required",
+      isConfirmation: true,
+      hint: "Confirm only — no real emergency phone stored.",
+    },
+    { title: "Quiet hours / smoking / pets policy confirmed", severity: "required" },
   ],
   platform: [
-    { title: "Airbnb draft listing created", severity: "blocking" },
-    { title: "Booking.com draft listing created", severity: "blocking" },
+    { title: "Shared listing content ready", severity: "required", key: "shared_content_ready" },
+    { title: "Airbnb draft listing created", severity: "blocking", key: "airbnb_draft" },
+    { title: "Booking.com draft listing created", severity: "blocking", key: "booking_draft" },
+    { title: "Pricing rules drafted", severity: "required", key: "pricing_rules" },
+    { title: "Calendar availability reviewed", severity: "required", key: "calendar_reviewed" },
     {
-      title: "Payout details confirmed",
-      severity: "blocking",
+      title: "Channel-specific cancellation / policy checks confirmed",
+      severity: "required",
       isConfirmation: true,
-      hint: "Bank details are never stored.",
+      key: "channel_policy_checks",
     },
-    { title: "Pricing rules drafted", severity: "required" },
   ],
   review: [
-    { title: "Final walkthrough complete", severity: "blocking" },
+    { title: "Blocking issues reviewed", severity: "blocking" },
+    { title: "Photo readiness approved", severity: "blocking" },
+    { title: "Final inspection done", severity: "blocking" },
     { title: "Manager sign-off", severity: "blocking" },
-    { title: "First guest stay scheduled", severity: "optional" },
+    { title: "Ready-to-publish confirmation checked", severity: "required", isConfirmation: true },
   ],
 };
 
 const PHOTO_TEMPLATE: Omit<PhotoItem, "id" | "status">[] = [
-  { label: "Hero shot", required: true },
+  { label: "Hero photo", required: true },
   { label: "Living room", required: true },
-  { label: "Main bedroom", required: true },
+  { label: "Bedroom", required: true },
   { label: "Kitchen", required: true },
   { label: "Bathroom", required: true },
-  { label: "Exterior", required: true },
+  { label: "Entrance / building", required: true },
+  { label: "Balcony / view", required: false },
+  { label: "Parking", required: false },
   { label: "Amenities", required: false },
   { label: "Safety equipment", required: false },
 ];
@@ -125,6 +203,7 @@ function buildTasks(propertyId: string, completion: "high" | "mid" | "low"): Tas
         severity: seed.severity,
         status,
         isConfirmation: seed.isConfirmation,
+        key: seed.key,
       });
     }
   }
