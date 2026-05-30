@@ -1,4 +1,5 @@
 import { SEVERITY_LABEL, type Severity } from "@/lib/domova/types";
+import { useT } from "@/lib/domova/i18n";
 
 const STYLE: Record<Severity, string> = {
   blocking:
@@ -12,11 +13,12 @@ const STYLE: Record<Severity, string> = {
 const MUTED = "bg-muted/60 text-muted-foreground/70 border-border/40";
 
 export function SeverityChip({ severity, muted }: { severity: Severity; muted?: boolean }) {
+  const t = useT();
   return (
     <span
       className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide ${muted ? MUTED : STYLE[severity]}`}
     >
-      {SEVERITY_LABEL[severity]}
+      {t(SEVERITY_LABEL[severity])}
     </span>
   );
 }
