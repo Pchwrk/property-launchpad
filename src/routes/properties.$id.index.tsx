@@ -1,5 +1,5 @@
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
-import { Camera, ChevronRight, Rocket } from "lucide-react";
+import { Camera, ChevronRight, MapPin, Rocket } from "lucide-react";
 import { MobileShell } from "@/components/domova/MobileShell";
 import { ReadinessBadge } from "@/components/domova/ReadinessBadge";
 import { SeverityChip } from "@/components/domova/SeverityChip";
@@ -72,8 +72,26 @@ function PropertyOverview() {
       }
     >
       <section className="rounded-2xl border border-border bg-card p-4">
-        <p className="text-xs text-muted-foreground">{property.addressPlaceholder}</p>
-        <p className="text-xs text-muted-foreground">{t("Owner:")} {property.ownerPlaceholder}</p>
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <p className="text-xs text-muted-foreground">{property.addressPlaceholder}</p>
+            <p className="text-xs text-muted-foreground">
+              {t("Owner:")} {property.ownerPlaceholder}
+            </p>
+          </div>
+          {property.mapsUrl && (
+            <a
+              href={property.mapsUrl}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={t("Open map")}
+              className="inline-flex shrink-0 items-center gap-1 rounded-md border border-border bg-background/60 px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:border-[color:var(--domova-accent)]/40 hover:text-foreground"
+            >
+              <MapPin className="h-3.5 w-3.5" />
+              {t("Open map")}
+            </a>
+          )}
+        </div>
 
         <div className="mt-3 flex gap-2">
           <PlatformPill label="Airbnb" ok={aReady} />
