@@ -1,5 +1,5 @@
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Plus } from "lucide-react";
+import { Plus, Trash2, Copy } from "lucide-react";
 import { useEffect, useState } from "react";
 import { MobileShell } from "@/components/domova/MobileShell";
 import { ReadinessBadge } from "@/components/domova/ReadinessBadge";
@@ -20,25 +20,42 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
-  const { properties, createDraft, resetDemoData } = useDomova();
+  const { properties, createDraft, resetDemoData, deleteProperty, duplicateProperty } = useDomova();
   const navigate = useNavigate();
   const t = useT();
-  const [pendingDraftId, setPendingDraftId] = useState<string | null>(null);
+  const [pendingNavId, setPendingNavId] = useState<string | null>(null);
+  const [pendingKind, setPendingKind] = useState<"draft" | "duplicate" | null>(null);
 
   const handleNewDraft = () => {
-    if (pendingDraftId) return;
+    if (pendingNavId) return;
     const id = createDraft();
-    setPendingDraftId(id);
+    setPendingKind("draft");
+    setPendingNavId(id);
+  };
+
+  const handleDuplicate = (id: string) => {
+    if (pendingNavId) return;
+    const newId = duplicateProperty(id);
+    if (!newId) return;
+    setPendingKind("duplicate");
+    setPendingNavId(newId);
+  };
+
+  const handleDelete = (id: string, name: string) => {
+    if (typeof window === "undefined") return;
+    const ok = window.confirm(`${t("Delete this property? This cannot be undone.")}\n\n${name}`);
+    if (ok) deleteProperty(id);
   };
 
   useEffect(() => {
-    if (!pendingDraftId) return;
-    if (properties.some((p) => p.id === pendingDraftId)) {
-      const id = pendingDraftId;
-      setPendingDraftId(null);
+    if (!pendingNavId) return;
+    if (properties.some((p) => p.id === pendingNavId)) {
+      const id = pendingNavId;
+      setPendingNavId(null);
+      setPendingKind(null);
       navigate({ to: "/properties/$id", params: { id } });
     }
-  }, [pendingDraftId, properties, navigate]);
+  }, [pendingNavId, properties, navigate]);
 
   const handleReset = () => {
     if (typeof window === "undefined") return;
@@ -55,24 +72,36 @@ function Dashboard() {
     >
       <button
         onClick={handleNewDraft}
-        disabled={pendingDraftId !== null}
+        disabled={pendingNavId !== null}
         className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-card/40 px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-card disabled:opacity-60"
       >
         <Plus className="h-4 w-4 text-[color:var(--domova-accent)]" />
-        {pendingDraftId ? t("Opening draft…") : t("New draft property")}
+        {pendingNavId
+          ? pendingKind === "duplicate"
+            ? t("Opening duplicate…")
+            : t("Opening draft…")
+          : t("New draft property")}
       </button>
 
+      {properties.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-border bg-card/40 px-4 py-6 text-center text-xs text-muted-foreground">
+          {t("No properties yet. Tap “New draft property” to start, or reset demo data.")}
+        </p>
+      ) : (
       <ul className="space-y-3">
         {properties.map((p) => {
           const ready = isReady(p);
           const blockerCount = blockers(p).length;
           const progress = overallProgress(p);
           return (
-            <li key={p.id}>
+            <li
+              key={p.id}
+              className="rounded-2xl border border-border bg-card transition-colors hover:border-[color:var(--domova-accent)]/40"
+            >
               <Link
                 to="/properties/$id"
                 params={{ id: p.id }}
-                className="block rounded-2xl border border-border bg-card p-4 transition-colors hover:border-[color:var(--domova-accent)]/40"
+                className="block p-4"
               >
                 <div className="flex items-start gap-3">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-muted text-2xl">
@@ -100,10 +129,30 @@ function Dashboard() {
                   </div>
                 </div>
               </Link>
+              <div className="flex items-center justify-end gap-1 border-t border-border px-2 py-1.5">
+                <button
+                  type="button"
+                  onClick={() => handleDuplicate(p.id)}
+                  disabled={pendingNavId !== null}
+                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
+                >
+                  <Copy className="h-3.5 w-3.5" />
+                  {t("Duplicate")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(p.id, p.name)}
+                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] text-[color:var(--status-blocker)] transition-colors hover:bg-[color:var(--status-blocker)]/10"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  {t("Delete")}
+                </button>
+              </div>
             </li>
           );
         })}
       </ul>
+      )}
 
       <div className="mt-6 rounded-xl border border-border bg-card p-3">
         <p className="text-[11px] font-medium text-foreground">{t("Quick test path")}</p>
