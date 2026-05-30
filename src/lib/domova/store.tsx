@@ -10,7 +10,7 @@ import {
 } from "react";
 import { MOCK_PROPERTIES, buildEmptyPhotos, buildEmptyTasks } from "./mock-data";
 import { LanguageProvider } from "./i18n";
-import type { PhotoStatus, Property, TaskStatus } from "./types";
+import type { CategoryId, PhotoStatus, Property, Severity, Task, TaskStatus } from "./types";
 
 type EditableDetails = Pick<
   Property,
@@ -26,6 +26,17 @@ interface DomovaContextValue {
   createDraft: () => string;
   deleteProperty: (propertyId: string) => void;
   duplicateProperty: (propertyId: string) => string | null;
+  addCustomTask: (
+    propertyId: string,
+    categoryId: CategoryId,
+    input: { title: string; hint?: string; severity: Severity },
+  ) => string | null;
+  updateTask: (
+    propertyId: string,
+    taskId: string,
+    partial: { title?: string; hint?: string; severity?: Severity },
+  ) => void;
+  deleteTask: (propertyId: string, taskId: string) => void;
   resetDemoData: () => void;
   hydrated: boolean;
 }
