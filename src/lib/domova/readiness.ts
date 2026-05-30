@@ -48,12 +48,8 @@ export function isReady(p: Property): boolean {
   );
 }
 
-function findTask(p: Property, title: string): Task | undefined {
-  return p.tasks.find((t) => t.title === title);
-}
-
-function done(p: Property, title: string): boolean {
-  const t = findTask(p, title);
+function doneByKey(p: Property, key: string): boolean {
+  const t = p.tasks.find((x) => x.key === key);
   return !!t && t.status === "done";
 }
 
@@ -64,18 +60,18 @@ export interface PlatformCheck {
 
 export function airbnbChecks(p: Property): PlatformCheck[] {
   return [
-    { label: "Airbnb draft listing created", ok: done(p, "Airbnb draft listing created") },
-    { label: "House rules drafted", ok: done(p, "House rules drafted") },
-    { label: "Hero shot approved", ok: p.photos.some((ph) => ph.label === "Hero shot" && ph.status === "approved") },
+    { label: "Airbnb draft listing created", ok: doneByKey(p, "airbnb_draft") },
+    { label: "House rules drafted", ok: doneByKey(p, "house_rules") },
+    { label: "Hero photo approved", ok: doneByKey(p, "hero_selected") },
     { label: "All required photos approved", ok: missingRequiredPhotos(p).length === 0 },
   ];
 }
 
 export function bookingChecks(p: Property): PlatformCheck[] {
   return [
-    { label: "Booking.com draft listing created", ok: done(p, "Booking.com draft listing created") },
-    { label: "Payout details confirmed", ok: done(p, "Payout details confirmed") },
-    { label: "Check-in / out times set", ok: done(p, "Check-in / out times set") },
+    { label: "Booking.com draft listing created", ok: doneByKey(p, "booking_draft") },
+    { label: "Payout details confirmed", ok: doneByKey(p, "payout_confirmed") },
+    { label: "Check-in instructions drafted", ok: doneByKey(p, "checkin_instructions") },
     { label: "All required photos approved", ok: missingRequiredPhotos(p).length === 0 },
   ];
 }
