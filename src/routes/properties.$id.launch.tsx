@@ -23,10 +23,13 @@ export const Route = createFileRoute("/properties/$id/launch")({
 
 function LaunchPage() {
   const { id } = Route.useParams();
-  const { getProperty } = useDomova();
+  const { getProperty, hydrated } = useDomova();
   const t = useT();
   const property = getProperty(id);
-  if (!property) throw notFound();
+  if (!property) {
+    if (!hydrated) return null;
+    throw notFound();
+  }
 
   const ready = isReady(property);
   const blockerList = blockers(property);
