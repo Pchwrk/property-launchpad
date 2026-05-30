@@ -1,4 +1,5 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
+import { useState } from "react";
 import { SeverityChip } from "@/components/domova/SeverityChip";
 import { MobileShell } from "@/components/domova/MobileShell";
 import { useDomova } from "@/lib/domova/store";
@@ -28,7 +29,10 @@ function ChecklistSection() {
   const cat = CATEGORIES.find((c) => c.id === (category as CategoryId));
   if (!cat) throw notFound();
 
+  const [openOnly, setOpenOnly] = useState(false);
   const tasks = tasksByCategory(property, cat.id);
+  const visible = openOnly ? tasks.filter((t) => t.status === "todo") : tasks;
+  const hiddenCount = tasks.length - visible.length;
 
   return (
     <MobileShell
@@ -37,15 +41,45 @@ function ChecklistSection() {
       backTo="/properties/$id"
       backLabel={property.name}
     >
-      <ul className="space-y-2">
-        {tasks.map((task) => (
+      <div className="mb-3 flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2">
+        <div className="min-w-0">
+          <p className="text-sm font-medium">Show open only</p>
+          <p className="text-[11px] text-muted-foreground">
+            Hides tasks marked done or n/a{openOnly && hiddenCount > 0 ? ` · ${hiddenCount} hidden` : ""}
+          </p>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={openOnly}
+          onClick={() => setOpenOnly((v) => !v)}
+          className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+            openOnly ? "bg-[color:var(--domova-accent)]" : "bg-muted"
+          }`}
+        >
+          <span
+            className={`absolute top-0.5 h-5 w-5 rounded-full bg-background shadow transition-transform ${
+              openOnly ? "translate-x-5" : "translate-x-0.5"
+            }`}
+          />
+        </button>
+      </div>
+
+      {visible.length === 0 ? (
+        <p className="rounded-lg border border-border bg-card px-3 py-4 text-center text-xs text-[color:var(--status-ready)]">
+          ✓ No open tasks in this category.
+        </p>
+      ) : (
+        <ul className="space-y-2">
+          {visible.map((task) => (
           <TaskRow
             key={task.id}
             task={task}
             onChange={(s) => setTaskStatus(property.id, task.id, s)}
           />
-        ))}
-      </ul>
+          ))}
+        </ul>
+      )}
 
       <p className="mt-6 text-center text-[11px] text-muted-foreground">
         Confirmation tasks never store sensitive data — codes, passwords, and contact details stay
