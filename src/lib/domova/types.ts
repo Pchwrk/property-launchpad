@@ -54,6 +54,8 @@ export interface Task {
   status: TaskStatus;
   isConfirmation?: boolean;
   key?: string;
+  /** True for tasks created by the user from inside the app. System/default tasks omit this. */
+  isCustom?: boolean;
 }
 
 export interface PhotoItem {
