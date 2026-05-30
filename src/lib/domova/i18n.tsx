@@ -16,6 +16,11 @@ const BG: Record<string, string> = {
     "Отвори Sunlit Studio → разреши черновата в Booking.com → одобри останалата снимка → провери Финален преглед.",
   "Prototype · no real owner, address, or credentials are stored.":
     "Прототип · не се съхраняват реални собственици, адреси или идентификационни данни.",
+  "Demo data is saved only in this browser. Do not enter real addresses, contacts, codes, passwords, payout details, or documents.":
+    "Демо данните се пазят само в този браузър. Не въвеждай реални адреси, контакти, кодове, пароли, данни за плащане или документи.",
+  "Reset demo data": "Нулирай демо данните",
+  "Reset demo data? This clears saved drafts and progress in this browser only.":
+    "Да нулирам ли демо данните? Това изчиства запазените чернови и прогрес само в този браузър.",
 
   // Property overview
   "Photos": "Снимки",
