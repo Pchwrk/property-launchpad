@@ -1,5 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import { flushSync } from "react-dom";
 import { MOCK_PROPERTIES, buildEmptyPhotos, buildEmptyTasks } from "./mock-data";
+import { LanguageProvider } from "./i18n";
 import type { PhotoStatus, Property, TaskStatus } from "./types";
 
 type EditableDetails = Pick<
@@ -68,11 +70,16 @@ export function DomovaProvider({ children }: { children: ReactNode }) {
       bedrooms: 1,
       beds: 1,
       maxGuests: 2,
-      checkInMethod: "self_check_in",
+      checkInMethod: "lockbox",
       tasks: buildEmptyTasks(id),
       photos: buildEmptyPhotos(id),
     };
-    setProperties((prev) => [draft, ...prev]);
+    // flushSync ensures the new draft is committed BEFORE navigate() runs,
+    // otherwise getProperty(id) on the next route would return undefined
+    // and throw notFound(). Scoped to only this state update.
+    flushSync(() => {
+      setProperties((prev) => [draft, ...prev]);
+    });
     return id;
   }, []);
 
@@ -81,7 +88,11 @@ export function DomovaProvider({ children }: { children: ReactNode }) {
     [properties, getProperty, setTaskStatus, setPhotoStatus, updatePropertyDetails, createDraft],
   );
 
-  return <DomovaContext.Provider value={value}>{children}</DomovaContext.Provider>;
+  return (
+    <DomovaContext.Provider value={value}>
+      <LanguageProvider>{children}</LanguageProvider>
+    </DomovaContext.Provider>
+  );
 }
 
 export function useDomova(): DomovaContextValue {
