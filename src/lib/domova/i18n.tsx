@@ -8,6 +8,9 @@ const BG: Record<string, string> = {
   "Properties": "Имоти",
   "Back": "Назад",
   "New draft property": "Нов чернови имот",
+  "Opening draft…": "Отваряне на чернова…",
+  "Property not found. This can happen if a session-only draft was lost after refresh.":
+    "Имотът не е намерен. Това може да се случи, ако сесийна чернова е загубена след презареждане.",
   "Quick test path": "Бърз тестов маршрут",
   "Open Sunlit Studio → resolve Booking.com draft listing → approve remaining photo → check Launch review.":
     "Отвори Sunlit Studio → разреши черновата в Booking.com → одобри останалата снимка → провери Launch review.",
