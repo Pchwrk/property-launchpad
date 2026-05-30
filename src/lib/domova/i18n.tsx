@@ -7,19 +7,19 @@ const BG: Record<string, string> = {
   // App chrome
   "Properties": "Имоти",
   "Back": "Назад",
-  "New draft property": "Нов чернови имот",
+  "New draft property": "Нов имот",
   "Opening draft…": "Отваряне на чернова…",
   "Property not found. This can happen if a session-only draft was lost after refresh.":
     "Имотът не е намерен. Това може да се случи, ако сесийна чернова е загубена след презареждане.",
-  "Quick test path": "Бърз тестов маршрут",
+  "Quick test path": "Бърз тест",
   "Open Sunlit Studio → resolve Booking.com draft listing → approve remaining photo → check Launch review.":
-    "Отвори Sunlit Studio → разреши черновата в Booking.com → одобри останалата снимка → провери Launch review.",
+    "Отвори Sunlit Studio → разреши черновата в Booking.com → одобри останалата снимка → провери Финален преглед.",
   "Prototype · no real owner, address, or credentials are stored.":
     "Прототип · не се съхраняват реални собственици, адреси или идентификационни данни.",
 
   // Property overview
   "Photos": "Снимки",
-  "Launch review": "Преглед за стартиране",
+  "Launch review": "Финален преглед",
   "Owner:": "Собственик:",
   "Next task": "Следваща задача",
   "Tap to resolve": "Натисни за разрешаване",
@@ -46,8 +46,8 @@ const BG: Record<string, string> = {
   "blocker_many": "блокера",
 
   // Checklist
-  "Show open only": "Покажи само отворени",
-  "Hides tasks marked done or n/a": "Скрива задачи, маркирани като готови или n/a",
+  "Show open only": "Само отворени задачи",
+  "Hides tasks marked done or n/a": "Скрива задачите, маркирани като готови или неприложими",
   "hidden": "скрити",
   "✓ No open tasks in this category.": "✓ Няма отворени задачи в тази категория.",
   "Confirmation only": "Само потвърждение",
@@ -55,11 +55,11 @@ const BG: Record<string, string> = {
     "Потвържденията не съхраняват чувствителни данни — кодове, пароли и контакти остават при собственика.",
   "To do": "За изпълнение",
   "Done": "Готово",
-  "n/a": "n/a",
+  "n/a": "Неприложимо",
 
   // Launch
   "Launch readiness": "Готовност за стартиране",
-  "Ready to publish": "Готов за публикуване",
+  "Ready to publish": "Готово за публикуване",
   "Overall": "Общо",
   "Computed from task & photo status — never set manually.":
     "Изчислено от статуса на задачите и снимките — никога не се задава ръчно.",
@@ -94,7 +94,7 @@ const BG: Record<string, string> = {
 
   // Safe details
   "Safe property details": "Безопасни данни за имота",
-  "Session only": "Само за сесията",
+  "Session only": "Само за текущата сесия",
   "Property name": "Име на имота",
   "City": "Град",
   "Property type": "Тип имот",
@@ -140,6 +140,101 @@ const BG: Record<string, string> = {
   "Airbnb & Booking checks.": "Проверки за Airbnb и Booking.",
   "Final launch review": "Финален преглед",
   "One last pass.": "Последна проверка.",
+
+  // Task titles — basics
+  "Property name set": "Името на имота е въведено",
+  "Property type selected": "Избран е тип имот",
+  "Bedrooms, beds, and max guests confirmed": "Спални, легла и макс. гости са потвърдени",
+  "Sleeping arrangements checked": "Проверена е подредбата за спане",
+  "Listing description draft prepared": "Подготвен е чернови текст за обявата",
+
+  // Task titles — owner
+  "Owner contact confirmed": "Контактът на собственика е потвърден",
+  "Backup contact confirmed": "Резервният контакт е потвърден",
+  "Owner communication preference confirmed": "Предпочитаният канал за комуникация е потвърден",
+  "Payout details confirmed as checked": "Данните за плащане са маркирани като проверени",
+  "Confirm only — no phone numbers or emails stored.":
+    "Само потвърждение — не се съхраняват телефони или имейли.",
+  "Confirm only — no contact data stored.":
+    "Само потвърждение — не се съхраняват контактни данни.",
+  "Confirm only — do not store real details.":
+    "Само потвърждение — не въвеждай реални данни.",
+  "Confirm only — no payout or bank data stored.":
+    "Само потвърждение — не се съхраняват банкови данни.",
+
+  // Task titles — documents
+  "Management agreement confirmed": "Договорът за управление е потвърден",
+  "Ownership / permission document checked": "Документът за собственост / разрешение е проверен",
+  "ID or company document checked": "Личен или фирмен документ е проверен",
+  "Rental license / local registration checked": "Лиценз за наем / местна регистрация е проверена",
+  "Tourist tax or local tax requirement checked": "Туристически или местен данък е проверен",
+  "Confirm only — no documents uploaded.":
+    "Само потвърждение — не се качват документи.",
+
+  // Task titles — access
+  "Check-in method selected": "Избран е метод за настаняване",
+  "Access / lockbox details confirmed": "Данните за достъп / сейф с ключ са потвърдени",
+  "Backup key plan confirmed": "Резервният план за ключове е потвърден",
+  "Key handover process confirmed": "Процесът по предаване на ключ е потвърден",
+  "Emergency access process confirmed": "Процесът за аварийен достъп е потвърден",
+  "Confirm only — codes and key locations are never stored.":
+    "Само потвърждение — кодове и места за ключове никога не се съхраняват.",
+  "Confirm only — no key locations stored.":
+    "Само потвърждение — не се съхраняват места за ключове.",
+  "Confirm only — no codes or locations stored.":
+    "Само потвърждение — не се съхраняват кодове или места.",
+
+  // Task titles — wifi
+  "Wi-Fi available": "Има налично Wi-Fi",
+  "Wi-Fi details confirmed": "Данните за Wi-Fi са потвърдени",
+  "Electricity and water checked": "Ток и вода са проверени",
+  "Heating / AC checked": "Отопление / климатик са проверени",
+  "Appliance basics checked": "Основни уреди са проверени",
+  "Confirm only — passwords are never stored.":
+    "Само потвърждение — пароли никога не се съхраняват.",
+
+  // Task titles — cleaning
+  "Cleaner assigned": "Назначен е чистач",
+  "First cleaning scheduled": "Първото почистване е насрочено",
+  "Linens and towels ready": "Спално бельо и кърпи са готови",
+  "Consumables stocked": "Консумативите са заредени",
+  "Trash instructions ready": "Инструкциите за боклука са готови",
+  "Damage / maintenance reporting process confirmed":
+    "Процесът за докладване на щети / поддръжка е потвърден",
+
+  // Task titles — photos
+  "Photographer or photo plan confirmed": "Фотограф или план за снимки е потвърден",
+  "Staging complete": "Подготовката за снимки е завършена",
+  "Hero photo selected": "Избрана е основна снимка",
+  "Required room photos checked": "Задължителните снимки на стаите са проверени",
+  "Entrance / building photo checked": "Снимката на входа / сградата е проверена",
+  "Retake review complete": "Прегледът за повторно снимане е завършен",
+
+  // Task titles — rules
+  "House rules drafted": "Изготвени са правила за дома",
+  "Check-in instructions drafted": "Изготвени са инструкции за настаняване",
+  "Check-out instructions drafted": "Изготвени са инструкции за напускане",
+  "Emergency contact placeholder confirmed": "Резервираното поле за авариен контакт е потвърдено",
+  "Quiet hours / smoking / pets policy confirmed":
+    "Тихи часове / пушене / политика за домашни любимци са потвърдени",
+  "Confirm only — no real emergency phone stored.":
+    "Само потвърждение — не се съхранява реален авариен телефон.",
+
+  // Task titles — platform
+  "Shared listing content ready": "Общото съдържание за обявите е готово",
+  "Airbnb draft listing created": "Създадена е чернова на обява в Airbnb",
+  "Booking.com draft listing created": "Създадена е чернова на обява в Booking.com",
+  "Pricing rules drafted": "Изготвени са правила за цените",
+  "Calendar availability reviewed": "Календарът за наличност е прегледан",
+  "Channel-specific cancellation / policy checks confirmed":
+    "Политиките за отказ по канали са потвърдени",
+
+  // Task titles — review
+  "Blocking issues reviewed": "Блокиращите проблеми са прегледани",
+  "Photo readiness approved": "Готовността на снимките е одобрена",
+  "Final inspection done": "Финалната инспекция е извършена",
+  "Manager sign-off": "Одобрение от мениджър",
+  "Ready-to-publish confirmation checked": "Потвърждението за публикуване е маркирано",
 };
 
 interface LanguageContextValue {
