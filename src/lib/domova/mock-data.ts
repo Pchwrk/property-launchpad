@@ -248,6 +248,7 @@ export const MOCK_PROPERTIES: Property[] = [
     checkInMethod: "lockbox",
     tasks: buildTasks("sunlit-studio", "high"),
     photos: buildPhotos("sunlit-studio", "high"),
+    mapsUrl: "https://www.google.com/maps/search/?api=1&query=Lisbon+city+center",
   },
   {
     id: "riverside-loft",
@@ -263,6 +264,7 @@ export const MOCK_PROPERTIES: Property[] = [
     checkInMethod: "smart_lock",
     tasks: buildTasks("riverside-loft", "mid"),
     photos: buildPhotos("riverside-loft", "mid"),
+    mapsUrl: "https://www.google.com/maps/search/?api=1&query=Porto+city+center",
   },
   {
     id: "old-town-flat",
@@ -278,5 +280,6 @@ export const MOCK_PROPERTIES: Property[] = [
     checkInMethod: "host_greeting",
     tasks: buildTasks("old-town-flat", "low"),
     photos: buildPhotos("old-town-flat", "low"),
+    mapsUrl: "https://www.google.com/maps/search/?api=1&query=Madrid+city+center",
   },
 ];
