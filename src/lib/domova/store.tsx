@@ -1,5 +1,4 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
-import { flushSync } from "react-dom";
 import { MOCK_PROPERTIES, buildEmptyPhotos, buildEmptyTasks } from "./mock-data";
 import { LanguageProvider } from "./i18n";
 import type { PhotoStatus, Property, TaskStatus } from "./types";
@@ -74,12 +73,9 @@ export function DomovaProvider({ children }: { children: ReactNode }) {
       tasks: buildEmptyTasks(id),
       photos: buildEmptyPhotos(id),
     };
-    // flushSync ensures the new draft is committed BEFORE navigate() runs,
-    // otherwise getProperty(id) on the next route would return undefined
-    // and throw notFound(). Scoped to only this state update.
-    flushSync(() => {
-      setProperties((prev) => [draft, ...prev]);
-    });
+    // Caller is responsible for a two-step flow: call createDraft(), then
+    // navigate only after the new id appears in `properties` (via useEffect).
+    setProperties((prev) => [draft, ...prev]);
     return id;
   }, []);
 
