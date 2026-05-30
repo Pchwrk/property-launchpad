@@ -1,5 +1,5 @@
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Plus, Trash2, Copy } from "lucide-react";
+import { Plus, Trash2, Copy, MoreHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 import { MobileShell } from "@/components/domova/MobileShell";
 import { ReadinessBadge } from "@/components/domova/ReadinessBadge";
@@ -25,6 +25,7 @@ function Dashboard() {
   const t = useT();
   const [pendingNavId, setPendingNavId] = useState<string | null>(null);
   const [pendingKind, setPendingKind] = useState<"draft" | "duplicate" | null>(null);
+  const [openActionsId, setOpenActionsId] = useState<string | null>(null);
 
   const handleNewDraft = () => {
     if (pendingNavId) return;
@@ -43,8 +44,13 @@ function Dashboard() {
 
   const handleDelete = (id: string, name: string) => {
     if (typeof window === "undefined") return;
-    const ok = window.confirm(`${t("Delete this property? This cannot be undone.")}\n\n${name}`);
-    if (ok) deleteProperty(id);
+    const ok = window.confirm(
+      `${t("Delete this demo property? This only removes it from this browser.")}\n\n${name}`,
+    );
+    if (ok) {
+      deleteProperty(id);
+      setOpenActionsId(null);
+    }
   };
 
   useEffect(() => {
@@ -129,25 +135,45 @@ function Dashboard() {
                   </div>
                 </div>
               </Link>
-              <div className="flex items-center justify-end gap-1 border-t border-border px-2 py-1.5">
+              <div className="flex items-center justify-end border-t border-border px-2 py-1">
                 <button
                   type="button"
-                  onClick={() => handleDuplicate(p.id)}
-                  disabled={pendingNavId !== null}
-                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
+                  onClick={() =>
+                    setOpenActionsId((cur) => (cur === p.id ? null : p.id))
+                  }
+                  aria-label={t("Property actions")}
+                  aria-expanded={openActionsId === p.id}
+                  aria-controls={`actions-${p.id}`}
+                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 >
-                  <Copy className="h-3.5 w-3.5" />
-                  {t("Duplicate")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(p.id, p.name)}
-                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] text-destructive transition-colors hover:bg-destructive/10"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                  {t("Delete")}
+                  <MoreHorizontal className="h-4 w-4" />
+                  <span className="sr-only">{t("Property actions")}</span>
                 </button>
               </div>
+              {openActionsId === p.id && (
+                <div
+                  id={`actions-${p.id}`}
+                  className="flex items-center justify-end gap-1 border-t border-border bg-muted/30 px-2 py-1.5"
+                >
+                  <button
+                    type="button"
+                    onClick={() => handleDuplicate(p.id)}
+                    disabled={pendingNavId !== null}
+                    className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
+                  >
+                    <Copy className="h-3.5 w-3.5" />
+                    {t("Duplicate")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(p.id, p.name)}
+                    className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] text-destructive transition-colors hover:bg-destructive/10"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    {t("Delete")}
+                  </button>
+                </div>
+              )}
             </li>
           );
         })}
