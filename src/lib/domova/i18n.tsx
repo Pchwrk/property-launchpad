@@ -21,6 +21,14 @@ const BG: Record<string, string> = {
   "Reset demo data": "Нулирай демо данните",
   "Reset demo data? This clears saved drafts and progress in this browser only.":
     "Да нулирам ли демо данните? Това изчиства запазените чернови и прогрес само в този браузър.",
+  "Delete": "Изтрий",
+  "Duplicate": "Дублирай",
+  "Delete this property? This cannot be undone.":
+    "Да изтрия ли този имот? Действието е необратимо.",
+  "No properties yet. Tap “New draft property” to start, or reset demo data.":
+    "Все още няма имоти. Натисни „Нов имот“, за да започнеш, или нулирай демо данните.",
+  "Opening duplicate…": "Отваряне на копие…",
+  " (copy)": " (копие)",
 
   // Property overview
   "Photos": "Снимки",
