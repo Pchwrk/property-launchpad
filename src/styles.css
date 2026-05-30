@@ -59,6 +59,12 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-domova-accent: var(--domova-accent);
+  --color-severity-blocking: var(--severity-blocking);
+  --color-severity-required: var(--severity-required);
+  --color-severity-optional: var(--severity-optional);
+  --color-status-ready: var(--status-ready);
+  --color-status-draft: var(--status-draft);
 }
 
 :root {
@@ -130,6 +136,21 @@
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+  --domova-accent: oklch(0.78 0.16 65);
+  --severity-blocking: oklch(0.65 0.21 25);
+  --severity-required: oklch(0.78 0.16 75);
+  --severity-optional: oklch(0.7 0.04 256);
+  --status-ready: oklch(0.72 0.17 155);
+  --status-draft: oklch(0.65 0.03 256);
+}
+
+:root {
+  --domova-accent: oklch(0.7 0.16 60);
+  --severity-blocking: oklch(0.6 0.22 25);
+  --severity-required: oklch(0.72 0.17 75);
+  --severity-optional: oklch(0.55 0.04 256);
+  --status-ready: oklch(0.62 0.17 155);
+  --status-draft: oklch(0.55 0.03 256);
 }
 
 @layer base {
