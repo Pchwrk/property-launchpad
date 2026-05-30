@@ -147,6 +147,31 @@ const BG: Record<string, string> = {
   "Approved": "Одобрена",
   "Retake": "Преснимане",
 
+  // Photos — editable list (Stage 6E)
+  "Track required listing photos here. This prototype does not upload files.":
+    "Тук следиш нужните снимки за обявата. В този прототип не се качват файлове.",
+  "Add photo item": "Добави снимка",
+  "Photo label": "Име на снимка",
+  "Required photo": "Задължителна снимка",
+  "Optional photo": "Незадължителна снимка",
+  "Note": "Бележка",
+  "Save photo item": "Запази снимка",
+  "Delete photo item": "Изтрий снимка",
+  "Delete this custom photo item?": "Да се изтрие ли тази персонална снимка?",
+  "Custom photo": "Персонална снимка",
+
+  // Default photo labels
+  "Hero photo": "Главна снимка",
+  "Living room": "Всекидневна",
+  "Bedroom": "Спалня",
+  "Kitchen": "Кухня",
+  "Bathroom": "Баня",
+  "Entrance / building": "Вход / сграда",
+  "Balcony / view": "Балкон / гледка",
+  "Parking": "Паркинг",
+  "Amenities": "Удобства",
+  "Safety equipment": "Безопасност",
+
   // Severity
   "Blocking": "Блокираща",
 
