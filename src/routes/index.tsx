@@ -1,5 +1,6 @@
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 import { MobileShell } from "@/components/domova/MobileShell";
 import { ReadinessBadge } from "@/components/domova/ReadinessBadge";
 import { useDomova } from "@/lib/domova/store";
@@ -22,11 +23,22 @@ function Dashboard() {
   const { properties, createDraft } = useDomova();
   const navigate = useNavigate();
   const t = useT();
+  const [pendingDraftId, setPendingDraftId] = useState<string | null>(null);
 
   const handleNewDraft = () => {
+    if (pendingDraftId) return;
     const id = createDraft();
-    navigate({ to: "/properties/$id", params: { id } });
+    setPendingDraftId(id);
   };
+
+  useEffect(() => {
+    if (!pendingDraftId) return;
+    if (properties.some((p) => p.id === pendingDraftId)) {
+      const id = pendingDraftId;
+      setPendingDraftId(null);
+      navigate({ to: "/properties/$id", params: { id } });
+    }
+  }, [pendingDraftId, properties, navigate]);
 
   return (
     <MobileShell
@@ -35,10 +47,11 @@ function Dashboard() {
     >
       <button
         onClick={handleNewDraft}
-        className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-card/40 px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-card"
+        disabled={pendingDraftId !== null}
+        className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-card/40 px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-card disabled:opacity-60"
       >
         <Plus className="h-4 w-4 text-[color:var(--domova-accent)]" />
-        {t("New draft property")}
+        {pendingDraftId ? t("Opening draft…") : t("New draft property")}
       </button>
 
       <ul className="space-y-3">
