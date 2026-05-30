@@ -10,7 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PropertiesIdRouteImport } from './routes/properties.$id'
+import { Route as PropertiesIdIndexRouteImport } from './routes/properties.$id.index'
 import { Route as PropertiesIdPhotosRouteImport } from './routes/properties.$id.photos'
 import { Route as PropertiesIdLaunchRouteImport } from './routes/properties.$id.launch'
 import { Route as PropertiesIdChecklistCategoryRouteImport } from './routes/properties.$id.checklist.$category'
@@ -20,9 +20,9 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PropertiesIdRoute = PropertiesIdRouteImport.update({
-  id: '/properties/$id',
-  path: '/properties/$id',
+const PropertiesIdIndexRoute = PropertiesIdIndexRouteImport.update({
+  id: '/properties/$id/',
+  path: '/properties/$id/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PropertiesIdPhotosRoute = PropertiesIdPhotosRouteImport.update({
@@ -44,53 +44,53 @@ const PropertiesIdChecklistCategoryRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/properties/$id': typeof PropertiesIdRouteWithChildren
   '/properties/$id/launch': typeof PropertiesIdLaunchRoute
   '/properties/$id/photos': typeof PropertiesIdPhotosRoute
+  '/properties/$id/': typeof PropertiesIdIndexRoute
   '/properties/$id/checklist/$category': typeof PropertiesIdChecklistCategoryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/properties/$id': typeof PropertiesIdRouteWithChildren
   '/properties/$id/launch': typeof PropertiesIdLaunchRoute
   '/properties/$id/photos': typeof PropertiesIdPhotosRoute
+  '/properties/$id': typeof PropertiesIdIndexRoute
   '/properties/$id/checklist/$category': typeof PropertiesIdChecklistCategoryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/properties/$id': typeof PropertiesIdRouteWithChildren
   '/properties/$id/launch': typeof PropertiesIdLaunchRoute
   '/properties/$id/photos': typeof PropertiesIdPhotosRoute
+  '/properties/$id/': typeof PropertiesIdIndexRoute
   '/properties/$id/checklist/$category': typeof PropertiesIdChecklistCategoryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/properties/$id'
     | '/properties/$id/launch'
     | '/properties/$id/photos'
+    | '/properties/$id/'
     | '/properties/$id/checklist/$category'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/properties/$id'
     | '/properties/$id/launch'
     | '/properties/$id/photos'
+    | '/properties/$id'
     | '/properties/$id/checklist/$category'
   id:
     | '__root__'
     | '/'
-    | '/properties/$id'
     | '/properties/$id/launch'
     | '/properties/$id/photos'
+    | '/properties/$id/'
     | '/properties/$id/checklist/$category'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  PropertiesIdRoute: typeof PropertiesIdRouteWithChildren
+  PropertiesIdIndexRoute: typeof PropertiesIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -102,11 +102,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/properties/$id': {
-      id: '/properties/$id'
+    '/properties/$id/': {
+      id: '/properties/$id/'
       path: '/properties/$id'
-      fullPath: '/properties/$id'
-      preLoaderRoute: typeof PropertiesIdRouteImport
+      fullPath: '/properties/$id/'
+      preLoaderRoute: typeof PropertiesIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/properties/$id/photos': {
@@ -133,26 +133,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface PropertiesIdRouteChildren {
-  PropertiesIdLaunchRoute: typeof PropertiesIdLaunchRoute
-  PropertiesIdPhotosRoute: typeof PropertiesIdPhotosRoute
-  PropertiesIdChecklistCategoryRoute: typeof PropertiesIdChecklistCategoryRoute
-}
-
-const PropertiesIdRouteChildren: PropertiesIdRouteChildren = {
-  PropertiesIdLaunchRoute: PropertiesIdLaunchRoute,
-  PropertiesIdPhotosRoute: PropertiesIdPhotosRoute,
-  PropertiesIdChecklistCategoryRoute: PropertiesIdChecklistCategoryRoute,
-}
-
-const PropertiesIdRouteWithChildren = PropertiesIdRoute._addFileChildren(
-  PropertiesIdRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  PropertiesIdRoute: PropertiesIdRouteWithChildren,
+  PropertiesIdIndexRoute: PropertiesIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

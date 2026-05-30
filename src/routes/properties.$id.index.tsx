@@ -15,7 +15,7 @@ import {
   nextTask,
 } from "@/lib/domova/readiness";
 
-export const Route = createFileRoute("/properties/$id")({
+export const Route = createFileRoute("/properties/$id/")({
   head: ({ params }) => ({
     meta: [
       { title: `Property · ${params.id} · DOMOVA` },
