@@ -142,7 +142,7 @@ function Dashboard() {
                 <button
                   type="button"
                   onClick={() => handleDelete(p.id, p.name)}
-                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] text-[color:var(--status-blocker)] transition-colors hover:bg-[color:var(--status-blocker)]/10"
+                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] text-destructive transition-colors hover:bg-destructive/10"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   {t("Delete")}
