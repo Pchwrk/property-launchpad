@@ -43,6 +43,17 @@ function PhotosPage() {
     hydrated,
   } = useDomova();
   const t = useT();
+
+  // All hooks must be unconditional — move useState above any early return/throw
+  const [showAdd, setShowAdd] = useState(false);
+  const [newLabel, setNewLabel] = useState("");
+  const [newRequired, setNewRequired] = useState(true);
+  const [newNote, setNewNote] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editLabel, setEditLabel] = useState("");
+  const [editRequired, setEditRequired] = useState(true);
+  const [editNote, setEditNote] = useState("");
+
   const property = getProperty(id);
   if (!property) {
     if (!hydrated) return null;
@@ -55,15 +66,6 @@ function PhotosPage() {
 
   const customPhotos = property.photos.filter((p) => p.isCustom);
   const defaultPhotos = property.photos.filter((p) => !p.isCustom);
-
-  const [showAdd, setShowAdd] = useState(false);
-  const [newLabel, setNewLabel] = useState("");
-  const [newRequired, setNewRequired] = useState(true);
-  const [newNote, setNewNote] = useState("");
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editLabel, setEditLabel] = useState("");
-  const [editRequired, setEditRequired] = useState(true);
-  const [editNote, setEditNote] = useState("");
 
   function resetAdd() {
     setNewLabel("");
