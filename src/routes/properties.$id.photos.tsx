@@ -3,7 +3,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { MobileShell } from "@/components/domova/MobileShell";
 import { useDomova } from "@/lib/domova/store";
 import { useT } from "@/lib/domova/i18n";
-import { PHOTO_STATUS_LABEL, type PhotoItem, type PhotoStatus } from "@/lib/domova/types";
+import { type PhotoItem, type PhotoStatus } from "@/lib/domova/types";
 import { missingRequiredPhotos } from "@/lib/domova/readiness";
 
 export const Route = createFileRoute("/properties/$id/photos")({
@@ -17,6 +17,15 @@ const STYLE: Record<PhotoStatus, string> = {
   uploaded: "border-[color:var(--severity-required)]/40 bg-[color:var(--severity-required)]/15 text-[color:var(--severity-required)]",
   approved: "border-[color:var(--status-ready)]/40 bg-[color:var(--status-ready)]/15 text-[color:var(--status-ready)]",
   retake: "border-[color:var(--severity-blocking)]/40 bg-[color:var(--severity-blocking)]/15 text-[color:var(--severity-blocking)]",
+};
+
+// Display labels: "uploaded" reads as "Available" in UI to avoid implying a real upload.
+// The PhotoStatus enum value is NOT renamed.
+const PHOTO_STATUS_DISPLAY: Record<PhotoStatus, string> = {
+  missing: "Missing",
+  uploaded: "Available",
+  approved: "Approved",
+  retake: "Retake",
 };
 
 function cycle(s: PhotoStatus): PhotoStatus {
@@ -43,6 +52,9 @@ function PhotosPage() {
   const requiredTotal = property.photos.filter((p) => p.required).length;
   const requiredApproved =
     requiredTotal - missingRequiredPhotos(property).length;
+
+  const customPhotos = property.photos.filter((p) => p.isCustom);
+  const defaultPhotos = property.photos.filter((p) => !p.isCustom);
 
   const [showAdd, setShowAdd] = useState(false);
   const [newLabel, setNewLabel] = useState("");
@@ -101,9 +113,17 @@ function PhotosPage() {
       backTo="/properties/$id"
       backLabel={property.name}
     >
-      <p className="mb-3 text-[11px] text-muted-foreground">
-        {t("Track required listing photos here. This prototype does not upload files.")}
-      </p>
+      <div className="mb-3 space-y-1.5 rounded-lg border border-border bg-card/60 p-3 text-[11px] text-muted-foreground">
+        <p>
+          {t(
+            "Track photo readiness here. This prototype does not upload or store image files. Use the statuses to mark whether each photo is missing, available outside the app, approved, or needs retake.",
+          )}
+        </p>
+        <p>
+          {t("Available = you have the photo somewhere else; it is not uploaded here.")}
+        </p>
+        <p className="text-foreground/80">{t("Tap a status to change it.")}</p>
+      </div>
 
       <div className="mb-3">
         {!showAdd ? (
@@ -169,113 +189,136 @@ function PhotosPage() {
         )}
       </div>
 
-      <ul className="grid grid-cols-2 gap-3">
-        {property.photos.map((photo) => {
-          const isEditing = editingId === photo.id;
-          return (
-            <li key={photo.id} className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3">
-              <button
-                onClick={() => setPhotoStatus(property.id, photo.id, cycle(photo.status))}
-                className="flex aspect-video items-center justify-center rounded-lg bg-muted text-2xl text-muted-foreground transition-colors hover:bg-muted/70"
-                aria-label={photo.label}
-              >
-                📷
-              </button>
-              <div>
-                {/* Custom labels are user-entered → never translated. System labels go through t(). */}
-                <p className="text-sm font-medium">
-                  {photo.isCustom ? photo.label : t(photo.label)}
-                </p>
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                  {photo.required ? t("Required") : t("Optional")}
-                </p>
-              </div>
-              <button
-                onClick={() => setPhotoStatus(property.id, photo.id, cycle(photo.status))}
-                className={`inline-flex w-fit items-center rounded-full border px-2 py-0.5 text-[10px] font-medium ${STYLE[photo.status]}`}
-              >
-                {t(PHOTO_STATUS_LABEL[photo.status])}
-              </button>
-              {photo.isCustom && (
-                <span className="inline-flex w-fit items-center rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-                  {t("Custom photo")}
-                </span>
-              )}
-              {photo.note && !isEditing && (
-                <p className="text-[11px] text-muted-foreground italic">
-                  {photo.note}
-                </p>
-              )}
-              {photo.isCustom && !isEditing && (
-                <div className="flex gap-2 pt-1">
-                  <button
-                    onClick={() => startEdit(photo)}
-                    className="flex-1 rounded-md border border-border px-2 py-1 text-[11px]"
-                  >
-                    {t("Edit")}
-                  </button>
-                  <button
-                    onClick={() => handleDelete(photo)}
-                    className="flex-1 rounded-md border border-[color:var(--severity-blocking)]/40 px-2 py-1 text-[11px] text-[color:var(--severity-blocking)]"
-                  >
-                    {t("Delete")}
-                  </button>
-                </div>
-              )}
-              {photo.isCustom && isEditing && (
-                <div className="space-y-2 pt-1">
-                  <input
-                    value={editLabel}
-                    onChange={(e) => setEditLabel(e.target.value)}
-                    placeholder={t("Photo label")}
-                    className="w-full rounded-md border border-border bg-background px-2 py-1 text-[12px]"
-                  />
-                  <div className="flex gap-1 text-[10px]">
-                    <label className="flex flex-1 items-center gap-1 rounded-md border border-border px-1.5 py-1">
-                      <input
-                        type="radio"
-                        checked={editRequired}
-                        onChange={() => setEditRequired(true)}
-                      />
-                      {t("Required")}
-                    </label>
-                    <label className="flex flex-1 items-center gap-1 rounded-md border border-border px-1.5 py-1">
-                      <input
-                        type="radio"
-                        checked={!editRequired}
-                        onChange={() => setEditRequired(false)}
-                      />
-                      {t("Optional")}
-                    </label>
-                  </div>
-                  <textarea
-                    value={editNote}
-                    onChange={(e) => setEditNote(e.target.value)}
-                    placeholder={t("Note")}
-                    rows={2}
-                    className="w-full rounded-md border border-border bg-background px-2 py-1 text-[12px]"
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      onClick={saveEdit}
-                      disabled={!editLabel.trim()}
-                      className="flex-1 rounded-md bg-[color:var(--domova-accent)] px-2 py-1 text-[11px] font-medium text-[color:var(--domova-accent-foreground)] disabled:opacity-50"
-                    >
-                      {t("Save changes")}
-                    </button>
-                    <button
-                      onClick={() => setEditingId(null)}
-                      className="flex-1 rounded-md border border-border px-2 py-1 text-[11px]"
-                    >
-                      {t("Cancel")}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </li>
-          );
-        })}
-      </ul>
+      {customPhotos.length > 0 && (
+        <section className="mb-5">
+          <h2 className="mb-2 px-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            {t("Custom photos")}
+          </h2>
+          <ul className="grid grid-cols-2 gap-3">
+            {customPhotos.map((photo) => renderPhoto(photo))}
+          </ul>
+        </section>
+      )}
+
+      <section>
+        <h2 className="mb-2 px-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          {t("Default requirements")}
+        </h2>
+        <ul className="grid grid-cols-2 gap-3">
+          {defaultPhotos.map((photo) => renderPhoto(photo))}
+        </ul>
+      </section>
     </MobileShell>
   );
+
+  function renderPhoto(photo: PhotoItem) {
+    const isEditing = editingId === photo.id;
+    return (
+      <li
+        key={photo.id}
+        className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3"
+      >
+        <div
+          className="flex aspect-video items-center justify-center rounded-lg bg-muted text-2xl text-muted-foreground"
+          aria-hidden="true"
+        >
+          📷
+        </div>
+        <div>
+          {/* Custom labels are user-entered → never translated. System labels go through t(). */}
+          <p className="text-sm font-medium">
+            {photo.isCustom ? photo.label : t(photo.label)}
+          </p>
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            {photo.required ? t("Required") : t("Optional")}
+          </p>
+        </div>
+        <button
+          onClick={() => setPhotoStatus(property!.id, photo.id, cycle(photo.status))}
+          aria-label={`${t(PHOTO_STATUS_DISPLAY[photo.status])} — ${t("Tap a status to change it.")}`}
+          className={`inline-flex w-fit items-center rounded-full border px-2 py-0.5 text-[10px] font-medium ${STYLE[photo.status]}`}
+        >
+          {t(PHOTO_STATUS_DISPLAY[photo.status])}
+        </button>
+        {photo.isCustom ? (
+          <span className="inline-flex w-fit items-center rounded-full border border-[color:var(--domova-accent)]/40 bg-[color:var(--domova-accent)]/10 px-2 py-0.5 text-[10px] font-medium text-[color:var(--domova-accent)]">
+            {t("Custom photo")}
+          </span>
+        ) : (
+          <span className="inline-flex w-fit items-center rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+            {t("Default requirement")}
+          </span>
+        )}
+        {photo.note && !isEditing && (
+          <p className="text-[11px] italic text-muted-foreground">{photo.note}</p>
+        )}
+        {photo.isCustom && !isEditing && (
+          <div className="flex gap-2 pt-1">
+            <button
+              onClick={() => startEdit(photo)}
+              className="flex-1 rounded-md border border-border px-2 py-1 text-[11px]"
+            >
+              {t("Edit")}
+            </button>
+            <button
+              onClick={() => handleDelete(photo)}
+              className="flex-1 rounded-md border border-[color:var(--severity-blocking)]/40 px-2 py-1 text-[11px] text-[color:var(--severity-blocking)]"
+            >
+              {t("Delete")}
+            </button>
+          </div>
+        )}
+        {photo.isCustom && isEditing && (
+          <div className="space-y-2 pt-1">
+            <input
+              value={editLabel}
+              onChange={(e) => setEditLabel(e.target.value)}
+              placeholder={t("Photo label")}
+              className="w-full rounded-md border border-border bg-background px-2 py-1 text-[12px]"
+            />
+            <div className="flex gap-1 text-[10px]">
+              <label className="flex flex-1 items-center gap-1 rounded-md border border-border px-1.5 py-1">
+                <input
+                  type="radio"
+                  checked={editRequired}
+                  onChange={() => setEditRequired(true)}
+                />
+                {t("Required")}
+              </label>
+              <label className="flex flex-1 items-center gap-1 rounded-md border border-border px-1.5 py-1">
+                <input
+                  type="radio"
+                  checked={!editRequired}
+                  onChange={() => setEditRequired(false)}
+                />
+                {t("Optional")}
+              </label>
+            </div>
+            <textarea
+              value={editNote}
+              onChange={(e) => setEditNote(e.target.value)}
+              placeholder={t("Note")}
+              rows={2}
+              className="w-full rounded-md border border-border bg-background px-2 py-1 text-[12px]"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={saveEdit}
+                disabled={!editLabel.trim()}
+                className="flex-1 rounded-md bg-[color:var(--domova-accent)] px-2 py-1 text-[11px] font-medium text-[color:var(--domova-accent-foreground)] disabled:opacity-50"
+              >
+                {t("Save changes")}
+              </button>
+              <button
+                onClick={() => setEditingId(null)}
+                className="flex-1 rounded-md border border-border px-2 py-1 text-[11px]"
+              >
+                {t("Cancel")}
+              </button>
+            </div>
+          </div>
+        )}
+      </li>
+    );
+  }
 }

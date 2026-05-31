@@ -143,13 +143,22 @@ const BG: Record<string, string> = {
   "Required": "Задължителна",
   "Optional": "Незадължителна",
   "Missing": "Липсва",
-  "Uploaded": "Качена",
+  "Uploaded": "Налична",
+  "Available": "Налична",
   "Approved": "Одобрена",
   "Retake": "Преснимане",
 
   // Photos — editable list (Stage 6E)
   "Track required listing photos here. This prototype does not upload files.":
     "Тук следиш нужните снимки за обявата. В този прототип не се качват файлове.",
+  "Track photo readiness here. This prototype does not upload or store image files. Use the statuses to mark whether each photo is missing, available outside the app, approved, or needs retake.":
+    "Тук следиш готовността на снимките. В този прототип не се качват и не се съхраняват файлове. Използвай статусите, за да отбележиш дали снимката липсва, налична е извън приложението, одобрена е или трябва да се преснеме.",
+  "Available = you have the photo somewhere else; it is not uploaded here.":
+    "Налична = имаш снимката другаде; тя не е качена тук.",
+  "Tap a status to change it.": "Натисни статус, за да го промениш.",
+  "Custom photos": "Персонални снимки",
+  "Default requirements": "Основни изисквания",
+  "Default requirement": "Основно изискване",
   "Add photo item": "Добави снимка",
   "Photo label": "Име на снимка",
   "Required photo": "Задължителна снимка",
