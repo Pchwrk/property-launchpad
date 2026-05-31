@@ -3,7 +3,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { MobileShell } from "@/components/domova/MobileShell";
 import { useDomova } from "@/lib/domova/store";
 import { useT } from "@/lib/domova/i18n";
-import { PHOTO_STATUS_LABEL, type PhotoItem, type PhotoStatus } from "@/lib/domova/types";
+import { type PhotoItem, type PhotoStatus } from "@/lib/domova/types";
 import { missingRequiredPhotos } from "@/lib/domova/readiness";
 
 export const Route = createFileRoute("/properties/$id/photos")({
